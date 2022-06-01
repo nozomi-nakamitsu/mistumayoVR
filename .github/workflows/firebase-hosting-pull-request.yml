@@ -4,16 +4,20 @@
 name: Deploy to Firebase Hosting on PR
 'on': pull_request
 jobs:
+  build:
+
+  runs-on: ubuntu-latest
   build_and_preview:
     if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
     runs-on: ubuntu-latest
     steps:
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: install # will run `yarn install` command
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: build # will run `yarn build` command
+    - uses: actions/checkout@v1
+    - uses: nuxt/actions-yarn@master
+      with:
+        args: install
+    - uses: nuxt/actions-yarn@master
+      with:
+        args: generate
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
