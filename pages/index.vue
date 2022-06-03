@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <h1>こんにちは〜💁‍♂️</h1>
-    <div id="auth"></div>
+  <div class="index-container">
+    <h1>VR VIDEO</h1>
+    <div class="button-panel">
+      <div id="auth"></div>
+    </div>
   </div>
 </template>
 
@@ -64,14 +66,15 @@ export default defineComponent({
 
     auth.onAuthStateChanged((user) => {
       if (user) {
+        // NOTE: ログインユーザーの名前は仮置き
         const signOutMessage = `
           <p>Hello, ${user.displayName}!<\/p>
-          <button class="btn btn-primary" type="submit"  onClick="signOut()">サインアウト<\/button>
+          <button class="button" type="submit"  onClick="signOut()">SIGN OUT<\/button>
           `;
         document.getElementById("auth").innerHTML = signOutMessage;
       } else {
         const signInMessage = `
-            <button class="btn btn-primary" type="submit"  onClick="signIn()">サインイン<\/button>
+            <button class="button" type="submit"  onClick="signIn()">SIGN IN WITH GOOGLE<\/button>
             `;
         document.getElementById("auth").innerHTML = signInMessage;
       }
@@ -79,3 +82,68 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss">
+.index-container {
+  background: #fafafa;
+  margin: 15em auto;
+  padding: 4em;
+  max-width: 370px;
+
+  > h1 {
+    text-align: center;
+    padding: 1em 0;
+    font-size: 1.5em;
+  }
+
+  > form {
+    padding: 0 1.5em;
+  }
+
+  .form-item {
+    margin-bottom: 0.75em;
+    width: 100%;
+  }
+
+  .form-item input {
+    background: #fafafa;
+    border: none;
+    border-bottom: 2px solid #e9e9e9;
+    color: #666;
+    font-family: "Open Sans", sans-serif;
+    font-size: 1em;
+    height: 50px;
+    transition: border-color 0.3s;
+    width: 100%;
+  }
+
+  .form-item input:focus {
+    border-bottom: 2px solid #c0c0c0;
+    outline: none;
+  }
+
+  .button-panel {
+    margin: 2em 0 0;
+    width: 100%;
+  }
+
+  .button-panel .button {
+    background: #f16272;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    height: 50px;
+    font-family: "Open Sans", sans-serif;
+    font-size: 1em;
+    letter-spacing: 0.05em;
+    text-align: center;
+    text-transform: uppercase;
+    transition: background 0.3s ease-in-out;
+    width: 100%;
+  }
+
+  .button:hover {
+    background: #ee3e52;
+  }
+}
+</style>
