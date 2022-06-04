@@ -1,8 +1,10 @@
 <template>
   <div v-if="room" class="list-room-container">
     <h1>ROOM</h1>
-    <div>{{ room.name }}</div>
-    <div>{{ room.dateTime }}</div>
+    <div class="list">
+      <div>{{ room.name }}</div>
+      <div>{{ room.dateTime }}</div>
+    </div>
   </div>
   <div v-else>
     <h1>作成したルームが見つからないようです...😭</h1>
@@ -36,6 +38,7 @@ export default defineComponent({
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         room.value = docSnap.data();
+        console.log(room.value.dateTime.toLocaleString());
       }
     });
 
@@ -52,5 +55,10 @@ export default defineComponent({
   margin: 4em auto;
   padding: 6em;
   max-width: 720px;
+
+  > .list {
+    display: flex;
+    gap: 10px 20px;
+  }
 }
 </style>
