@@ -14,6 +14,7 @@ import "firebase/compat/firestore";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { ROOM_ROUTES } from "@/config/routes.ts";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 
 export default defineComponent({
   name: "Index",
@@ -29,9 +30,8 @@ export default defineComponent({
       appId: process.env.APP_ID,
       measurementId: process.env.MEASUREMENT_ID,
     };
-
     const app = initializeApp(firebaseConfig);
-
+    const db = getFirestore(app);
     const auth = getAuth();
     const provider = new GoogleAuthProvider();
 
@@ -40,17 +40,14 @@ export default defineComponent({
         .then((result) => {
           const credential = GoogleAuthProvider.credentialFromResult(result);
           const token = credential.accessToken;
-          // The signed-in user info.
           const user = result.user;
-          // ...
+          router.push(ROOM_ROUTES.index.path);
         })
         .catch((error) => {
-          // Handle Errors here.
           const errorCode = error.code;
           const errorMessage = error.message;
           const email = error.email;
           const credential = GoogleAuthProvider.credentialFromError(error);
-          // ...
         });
     };
 
@@ -67,7 +64,7 @@ export default defineComponent({
       });
     };
 
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(async (user) => {
       if (user) {
         // NOTE: ログインユーザーの名前は仮置き
         const signOutMessage = `
@@ -75,6 +72,18 @@ export default defineComponent({
           <button class="button" type="submit"  onClick="signOut()">SIGN OUT<\/button>
           `;
         document.getElementById("auth").innerHTML = signOutMessage;
+
+        try {
+          const docRef = await addDoc(collection(db, "users"), {
+            uid: user.uid,
+            name: user.displayName,
+            icon: user.photoURL,
+          });
+          console.log(docRef, "できたっぽい");
+        } catch (e) {
+          console.error(e);
+        }
+
         router.push(ROOM_ROUTES.create.path);
       } else {
         const signInMessage = `
