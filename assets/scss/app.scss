@@ -6,4 +6,12 @@
 @import "generic/reset";
 // elements
 @import "elements/main";
+// pages
+@import "components/pages/prepare-container";
+@import "components/pages/stream-container";
+
+
+// common
+@import "components/common/common-button";
+@import "components/common/footer-container";
 

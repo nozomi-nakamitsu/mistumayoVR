@@ -1,0 +1,42 @@
+.prepare-container {
+  width: 80%;
+  margin: 40px auto;
+  height: 100vh;
+  &.-is-join {
+    width: 100%;
+    margin: 0 auto;
+    > .container {
+      height: calc(100% - 40px);
+    }
+    > .container > .left {
+      height: 100%;
+      background-color: yellow;
+      width: 70%;
+      &.-no-member {
+        width: 100%;
+      }
+    }
+  }
+  > .container {
+    display: flex;
+    align-items: center;
+  }
+  > .container > .left {
+    height: 100%;
+    width: 600px;
+  }
+  > .container > .right {
+    width: 300px;
+  }
+  > .container > .left > .video {
+    // TODO: 仮なので後で消す
+    width: 500px;
+    background-color: $red;
+    height: 300px;
+  }
+  > .container > .right > .title {
+    font-weight: bold;
+    text-align: center;
+    padding-bottom: 12px;
+  }
+}

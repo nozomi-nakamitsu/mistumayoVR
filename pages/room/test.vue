@@ -1,7 +1,7 @@
 <template>
 <div>
   自分
- <video id="webcam-video" style="display: none;"></video>
+ <video id="webcam-video2" style="display: none;"></video>
  {{peer?peer.options.user.name:""}}
     <canvas id="landmarks"></canvas>
     相手
@@ -230,10 +230,11 @@ export default defineComponent({
         mode: 'sfu',
         stream
       })
-      room.on('open', () => {
-        console.log(`join: ${room.name}`)
-        // your code
-      })
+      // room.on('open', () => {
+      //   console.log(`join: ${room.name}`)
+      //   console.log(room)
+
+      // })
 
     // Render remote stream for new peer join in the room
     room.on('stream', async stream => {
