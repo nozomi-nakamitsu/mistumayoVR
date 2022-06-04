@@ -19,6 +19,7 @@ export default defineComponent({
   name: "Index",
   setup() {
     const router = useRouter();
+    // TODO: 共通化する
     const firebaseConfig = {
       apiKey: process.env.API_KEY,
       authDomain: process.env.AUTH_DOMAIN,
