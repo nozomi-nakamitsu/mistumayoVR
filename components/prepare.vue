@@ -11,8 +11,32 @@
         　<button class="common-button" @click="$emit('click')">
           今すぐ参加する
         </button>
+        <div class="avatar-select">
+          <p>アバターを選ぶ</p>
+          <div class="items">
+            <div class="item">
+              　<button
+                class="common-button"
+                @click="$emit('select-avatar', 'A')"
+              >
+                A
+              </button>
+            </div>
+            <div class="item">
+              <button
+                class="common-button"
+                @click="$emit('select-avatar', 'B')"
+              >
+                B
+              </button>
+            </div>
+            　
+          </div>
+        </div>
       </div>
-      <div class="right" v-if="hasMember"></div>
+      <div class="right">
+        <div class="remote-streams" id="js-remote-streams"></div>
+      </div>
     </div>
     <div class="footer-container" v-if="isJoin">
       <button>切る</button>
@@ -21,8 +45,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "@nuxtjs/composition-api";
-
+import { defineComponent, ref, PropType } from "@nuxtjs/composition-api";
 export default defineComponent({
   props: {
     isJoin: {
@@ -34,10 +57,11 @@ export default defineComponent({
       required: true,
     },
     room: {
+      type: Object,
       required: true,
     },
   },
-  emits: ["click"],
+  emits: ["click", "select-avatar"],
   setup() {},
 });
 </script>

@@ -5,6 +5,7 @@
       :is-join="isJoin"
       :has-member="hasMember"
       :room="room"
+      @select-avatar="initializeVideo"
     ></Prepare>
   </div>
 </template>
@@ -29,6 +30,7 @@ export default defineComponent({
   },
   props: {},
   setup() {
+    const remoteVideos = ref();
     const Route = useRoute();
     const roomId = Route.value.params.id;
     const room = {
@@ -41,10 +43,29 @@ export default defineComponent({
 
     const peer = ref();
     const vrm = ref(null);
-    const initializeVideo = async () => {
-      // TODO:firestoreからデータを取得する!
+    const setSkyWay = () => {
+      const API_KEY = process.env.SKY_WAY_API_KEY;
 
-      // SkyWay
+      peer.value = new Peer({
+        key: API_KEY,
+        user: { name: "みっつん", icon: "aaa.jpeg" },
+      });
+      peer.value.on("open", (pid) => {
+        console.log(`PeerId: ${pid}`);
+      });
+    };
+    const switchAvator = (type) => {
+      if (type === "A") {
+        return "/resource/sample1.vrm";
+      }
+      return "/resource/sample2.vrm";
+    };
+    const initializeVideo = async (avatar) => {
+      // TODO:firestoreからデータを取得する!
+      const avatarDom = document.getElementById("avatar-canvas");
+      if (avatarDom) {
+        avatarDom.remove();
+      }
       const width = 500;
       const height = 300;
       const scene = new THREE.Scene();
@@ -59,7 +80,6 @@ export default defineComponent({
       const light = new THREE.DirectionalLight(0xffffff, 1);
       const $video = document.getElementById("webcam-video");
       const $landmarkCanvas = document.getElementById("landmarks");
-      const API_KEY = process.env.SKY_WAY_API_KEY;
       let blinking = false;
       let smiling = false;
       let lipDist;
@@ -132,8 +152,9 @@ export default defineComponent({
       });
 
       // VRM Settings
+
       loader.load(
-        "/resource/sample2.vrm",
+        switchAvator(avatar),
         async (gltf) => {
           vrm.value = await VRM.from(gltf);
           scene.add(vrm.value.scene);
@@ -231,37 +252,10 @@ export default defineComponent({
         requestAnimationFrame(render);
       };
       render();
-
-      // SkyWay(WebRTC)
-
-      peer.value = new Peer({
-        key: API_KEY,
-        user: { name: "みっつん", icon: "aaa.jpeg" },
-      });
-      peer.value.on("open", (pid) => {
-        console.log(`PeerId: ${pid}`);
-      });
     };
     const joinRoom = async () => {
+      remoteVideos.value = document.getElementById("js-remote-streams");
       isJoin.value = true;
-      const room = peer.value.joinRoom(roomId, {
-        mode: "sfu",
-        stream,
-      });
-      room.on("open", () => {
-        console.log(`join: ${room.name}`);
-        console.log(room);
-      });
-      // Render remote stream for new peer join in the room
-      room.on("stream", async (stream) => {
-        const newVideo = document.createElement("video");
-        newVideo.srcObject = stream;
-        newVideo.playsInline = true;
-        // mark peerId to find it later at peerLeave event
-        newVideo.setAttribute("data-peer-id", stream.peerId);
-        remoteVideos.append(newVideo);
-        await newVideo.play().catch(console.error);
-      });
       if (roomId === "") {
         return console.warn("ルームIDがありません");
       }
@@ -275,9 +269,29 @@ export default defineComponent({
       });
       const audioTrack = audioStream.getAudioTracks()[0];
       stream.addTrack(audioTrack);
+      const room = peer.value.joinRoom(roomId, {
+        mode: "sfu",
+        stream,
+      });
+      room.on("open", async () => {
+        console.log(`join: ${room.name}`);
+        console.log(room);
+
+        room.on("stream", async (stream) => {
+          console.log("stream!!!!!!!");
+          const newVideo = document.createElement("video");
+          newVideo.srcObject = stream;
+          newVideo.playsInline = true;
+          // mark peerId to find it later at peerLeave event
+          newVideo.setAttribute("data-peer-id", stream.peerId);
+          remoteVideos.value.append(newVideo);
+          await newVideo.play().catch(console.error);
+        });
+      });
     };
-    onMounted(() => {
-      initializeVideo();
+    onMounted(async () => {
+      await initializeVideo("A");
+      await setSkyWay();
     });
 
     return {
@@ -286,6 +300,7 @@ export default defineComponent({
       joinRoom,
       hasMember,
       room,
+      initializeVideo,
     };
   },
 });
