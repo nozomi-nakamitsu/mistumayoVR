@@ -1,10 +1,5 @@
-/*
-html5doctor.com Reset Stylesheet
-v1.6.1
-Last Updated: 2010-09-17
-Author: Richard Clark - http://richclarkdesign.com
-Twitter: @rich_clark
-*/
+/* Generic Layer */
+
 * {
   box-sizing: border-box;
 }
@@ -87,10 +82,6 @@ video {
   outline: 0;
 }
 
-body {
-  line-height: 1;
-}
-
 article,
 aside,
 details,
@@ -110,74 +101,59 @@ li {
   list-style: none;
 }
 
-blockquote,
-q {
-  quotes: none;
-}
-
-blockquote::before,
-blockquote::after,
-q::before,
-q::after {
-  content: "";
-  content: none;
-}
-
 a {
-  padding: 0;
-  margin: 0;
-  font-size: 100%;
+  color: inherit;
   text-decoration: none;
-  vertical-align: baseline;
+  outline: none;
+}
+
+/* Form Style Reset */
+input {
+  font: inherit;
   background: transparent;
+  border: none;
+  border-radius: 0;
+  outline: none;
 }
 
-/* change colours to suit your needs */
-ins {
-  color: #000;
-  text-decoration: none;
-  background-color: #ff9;
+button,
+select,
+textarea {
+  font: inherit;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
-/* change colours to suit your needs */
-mark {
-  font-style: italic;
-  font-weight: bold;
-  color: #000;
-  background-color: #ff9;
+textarea {
+  resize: none;
 }
 
-del {
-  text-decoration: line-through;
-}
-
-abbr[title],
-dfn[title] {
-  cursor: help;
-  border-bottom: 1px dotted;
-}
-
-table {
-  border-spacing: 0;
-  border-collapse: collapse;
-}
-
-/* change border colour to suit your needs */
-hr {
-  display: block;
-  height: 1px;
-  padding: 0;
-  margin: 1em 0;
-  border: 0;
-  border-top: 1px solid #ccc;
-}
-
-input,
+input[type="submit"],
+input[type="button"],
+button,
 select {
-  vertical-align: middle;
+  cursor: pointer;
 }
 
-/* 
-・reset.scssは変更不可
-・要素セレクタのスタイルを変更したい場合は、elementsで行う
-*/
+select::-ms-expand {
+  display: none;
+}
+
+input:-webkit-autofill {
+  //   -webkit-box-shadow: 0 0 0 1000px $white-dr-white inset;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

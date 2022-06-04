@@ -1,0 +1,11 @@
+.avatar-select {
+  width: 100%;
+  padding-top: 20px;
+  > .items {
+    display: flex;
+  }
+  > .items > .item {
+    padding: 0 8px;
+    width: 50%;
+  }
+}

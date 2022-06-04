@@ -1,0 +1,18 @@
+.common-button {
+  background: #f16272;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  height: 50px;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1em;
+  letter-spacing: 0.05em;
+  text-align: center;
+  text-transform: uppercase;
+  width: 100%;
+  &.-outline {
+    background: $white;
+    border: 1px $red solid;
+    color: $red;
+  }
+}
