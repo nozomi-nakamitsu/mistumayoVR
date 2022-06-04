@@ -1,0 +1,17 @@
+.leaved-container {
+  height: 100vh;
+  padding: 60px 20px;
+  width: 100%;
+  > .items {
+    display: flex;
+    width: 100%;
+  }
+  > .items > .item {
+    padding: 8px;
+    width: 50%;
+  }
+  > .text {
+    text-align: center;
+    padding-bottom: 40px;
+  }
+}

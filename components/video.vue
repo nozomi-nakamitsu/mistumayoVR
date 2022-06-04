@@ -39,7 +39,7 @@
       </div>
     </div>
     <div class="footer-container" v-if="isJoin">
-      <button>切る</button>
+      <button @click="$emit('leave')">退出</button>
     </div>
   </div>
 </template>
@@ -61,7 +61,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["click", "select-avatar"],
+  emits: ["click", "select-avatar", "leave"],
   setup() {},
 });
 </script>

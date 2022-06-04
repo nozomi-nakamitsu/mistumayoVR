@@ -1,12 +1,13 @@
 <template>
   <div>
-    <Prepare
-      @click="joinRoom"
+    <Video
+      @click="onJoin"
       :is-join="isJoin"
       :has-member="hasMember"
-      :room="room"
+      :room="roomRef"
       @select-avatar="initializeVideo"
-    ></Prepare>
+      @leave="onLeave"
+    ></Video>
   </div>
 </template>
 
@@ -16,31 +17,34 @@ import {
   onMounted,
   ref,
   useRoute,
+  useRouter,
 } from "@nuxtjs/composition-api";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { VRM, VRMSchema } from "@pixiv/three-vrm";
 import * as faceapi from "face-api.js";
 import Peer from "skyway-js";
-import Prepare from "@/components/prepare.vue";
+import Video from "@/components/video.vue";
 
 export default defineComponent({
   components: {
-    Prepare,
+    Video,
   },
   props: {},
   setup() {
     const remoteVideos = ref();
     const Route = useRoute();
+    const Router = useRouter();
+
     const roomId = Route.value.params.id;
-    const room = {
+    const roomRef = {
       name: "あああああ",
       id: roomId,
     };
 
     const isJoin = ref(false);
     const hasMember = ref(false);
-
+    let room;
     const peer = ref();
     const vrm = ref(null);
     const setSkyWay = () => {
@@ -253,7 +257,7 @@ export default defineComponent({
       };
       render();
     };
-    const joinRoom = async () => {
+    const onJoin = async () => {
       remoteVideos.value = document.getElementById("js-remote-streams");
       isJoin.value = true;
       if (roomId === "") {
@@ -269,7 +273,7 @@ export default defineComponent({
       });
       const audioTrack = audioStream.getAudioTracks()[0];
       stream.addTrack(audioTrack);
-      const room = peer.value.joinRoom(roomId, {
+      room = peer.value.joinRoom(roomId, {
         mode: "sfu",
         stream,
       });
@@ -287,7 +291,30 @@ export default defineComponent({
           remoteVideos.value.append(newVideo);
           await newVideo.play().catch(console.error);
         });
+        room.on("close", async () => {
+          Array.from(remoteVideos.value.children).forEach((remoteVideo) => {
+            remoteVideo.srcObject.getTracks().forEach((track) => track.stop());
+            remoteVideo.srcObject = null;
+            remoteVideo.remove();
+          });
+        });
+        room.on("peerLeave", (peerId) => {
+          const leavedPeer = document.querySelector(
+            `[data-peer-id="${peerId}"]`
+          );
+          console.log("leavedPeer", leavedPeer);
+          if (leavedPeer) {
+            leavedPeer.remove();
+          }
+        });
       });
+    };
+    const onLeave = async () => {
+      await room.close();
+      await peer.value.destroy();
+      peer.value = null;
+      // わからないのでリロードしてます。
+      window.location.href = `/room/leaved/${roomId}`;
     };
     onMounted(async () => {
       await initializeVideo("A");
@@ -297,10 +324,11 @@ export default defineComponent({
     return {
       peer,
       isJoin,
-      joinRoom,
+      onJoin,
       hasMember,
-      room,
+      roomRef,
       initializeVideo,
+      onLeave,
     };
   },
 });
