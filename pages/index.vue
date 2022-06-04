@@ -8,15 +8,17 @@
 </template>
 
 <script>
-import { defineComponent } from "@nuxtjs/composition-api";
+import { defineComponent, useRouter } from "@nuxtjs/composition-api";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { ROOM_ROUTES } from "@/config/routes.ts";
 
 export default defineComponent({
   name: "Index",
   setup() {
+    const router = useRouter();
     const firebaseConfig = {
       apiKey: process.env.API_KEY,
       authDomain: process.env.AUTH_DOMAIN,
@@ -72,6 +74,7 @@ export default defineComponent({
           <button class="button" type="submit"  onClick="signOut()">SIGN OUT<\/button>
           `;
         document.getElementById("auth").innerHTML = signOutMessage;
+        router.push(ROOM_ROUTES.create.path);
       } else {
         const signInMessage = `
             <button class="button" type="submit"  onClick="signIn()">SIGN IN WITH GOOGLE<\/button>
