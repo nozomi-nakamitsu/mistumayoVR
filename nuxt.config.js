@@ -46,5 +46,7 @@ export default {
     MESSAGING_SENDER_ID: process.env.MESSAGING_SENDER_ID,
     APP_ID: process.env.APP_ID,
     MEASUREMENT_ID: process.env.MEASUREMENT_ID,
+    SKY_WAY_API_KEY: process.env.SKY_WAY_API_KEY,
+
   },
 };
