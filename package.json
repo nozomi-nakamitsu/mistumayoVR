@@ -9,6 +9,9 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/vue-fontawesome": "^2.0.6",
     "@pixiv/three-vrm": "^0.6.11",
     "core-js": "^3.19.3",
     "dotenv": "^16.0.1",
@@ -16,6 +19,7 @@
     "firebase": "^9.8.2",
     "firebaseui": "^6.0.1",
     "nuxt": "^2.15.8",
+    "nuxt-fontawesome": "^0.4.0",
     "skyway-js": "^4.4.4",
     "three": "^0.141.0",
     "three-orbitcontrols-ts": "^0.1.2",

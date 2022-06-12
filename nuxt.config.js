@@ -34,8 +34,11 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [],
+  modules: [["nuxt-fontawesome"]],
 
+  fontawesome: {
+    component: "fa",
+  },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
 
@@ -48,6 +51,5 @@ export default {
     APP_ID: process.env.APP_ID,
     MEASUREMENT_ID: process.env.MEASUREMENT_ID,
     SKY_WAY_API_KEY: process.env.SKY_WAY_API_KEY,
-
   },
 };
