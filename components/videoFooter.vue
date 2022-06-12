@@ -19,7 +19,7 @@
     >
       <div>
         <AppIcon
-          :icon="isVideoOn ? faVideoSlash : faVideoSlash"
+          :icon="isVideoOn ? faVideoSlash : faVideo"
           :color="isVideoOn ? 'white' : 'gray'"
         ></AppIcon>
       </div>
@@ -32,7 +32,7 @@
       <div>
         <!-- TODO: 後でアイコンパスを修正する -->
         <AppIcon
-          :icon="faLaptop"
+          :icon="isScreenSharing ? faLaptoplash : faLaptop"
           :color="isScreenSharing ? 'white' : 'gray'"
         ></AppIcon>
       </div>
