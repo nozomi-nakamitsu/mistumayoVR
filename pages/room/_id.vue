@@ -9,7 +9,7 @@
       @leave="onLeave"
       @mute="onMute"
       @video="onVideo"
-      @scree-sharing="onScreeSharing"
+      @screen-sharing="onScreenSharing"
     ></Video>
   </div>
 </template>
@@ -345,7 +345,7 @@ export default defineComponent({
     const onVideo = (event) => {
       console.log(event, "ビデオ");
     };
-    const onScreeSharing = (event) => {
+    const onScreenSharing = (event) => {
       console.log(event, "画面共有");
     };
 
@@ -359,7 +359,7 @@ export default defineComponent({
       onLeave,
       onMute,
       onVideo,
-      onScreeSharing,
+      onScreenSharing,
     };
   },
 });
