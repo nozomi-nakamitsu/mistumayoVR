@@ -9,7 +9,7 @@
       @leave="onLeave"
       @mute="onMute"
       @video="onVideo"
-      @screen-sharing="onScreenSharing"
+      @screen-sharing="onClickStartScreenShare"
     ></Video>
   </div>
 </template>
@@ -47,7 +47,6 @@ export default defineComponent({
     const remoteVideos = ref();
     const Route = useRoute();
     const Router = useRouter();
-
     const firebaseConfig = {
       apiKey: process.env.API_KEY,
       authDomain: process.env.AUTH_DOMAIN,
@@ -59,10 +58,8 @@ export default defineComponent({
     };
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
     const roomId = Route.value.params.id;
     const docId = ref();
-
     const roomRef = {
       name: roomId,
       id: docId.value,
@@ -73,9 +70,9 @@ export default defineComponent({
     let room;
     const peer = ref();
     const vrm = ref(null);
+
     const setSkyWay = (auth) => {
       const API_KEY = process.env.SKY_WAY_API_KEY;
-
       peer.value = new Peer({
         key: API_KEY,
         user: {
@@ -93,6 +90,11 @@ export default defineComponent({
       }
       return "/resource/sample2.vrm";
     };
+    // 画面共有の設定
+    let screenShareRoomInstance;
+    let screenShareStream;
+    const remoteScreens = document.getElementById("js-remote-screen-streams");
+    let localVideo;
     const initializeVideo = async (avatar) => {
       const avatarDom = document.getElementById("avatar-canvas");
       if (avatarDom) {
@@ -186,7 +188,6 @@ export default defineComponent({
       });
 
       // VRM Settings
-
       loader.load(
         switchAvator(avatar),
         async (gltf) => {
@@ -285,9 +286,10 @@ export default defineComponent({
         renderer.render(scene, camera);
         requestAnimationFrame(render);
       };
-      render();
+      await render();
     };
-    const onJoin = async () => {
+
+    const onJoin = async (screenShareStream) => {
       remoteVideos.value = document.getElementById("js-remote-streams");
       isJoin.value = true;
       if (roomId === "") {
@@ -307,8 +309,13 @@ export default defineComponent({
         mode: "sfu",
         stream,
       });
+
+      // // // 画面共有の設定
+      localVideo = document.getElementById("js-local-stream");
+      localVideo.muted = true;
+      localVideo.playsInline = true;
+
       room.on("open", async () => {
-        console.log(`join: ${room.name}`);
         console.log(room);
         hasMember.value = !!room.members.length;
         room.on("stream", async (stream) => {
@@ -351,8 +358,16 @@ export default defineComponent({
         });
       });
     };
+    async function onClickStartScreenShare(event) {
+      console.log(event, "画面共有");
+      screenShareStream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+      });
+      localVideo.srcObject = screenShareStream;
+      await localVideo.play().catch(console.error);
+      room.replaceStream(screenShareStream);
+    }
     const onLeave = async () => {
-      console.log("a");
       await room.close();
       await peer.value.destroy();
       peer.value = null;
@@ -361,13 +376,11 @@ export default defineComponent({
     };
     onMounted(async () => {
       const auth = getAuth();
-
       const q = query(collection(db, "room"), where("name", "==", roomId));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         docId.value = doc.id;
       });
-
       await initializeVideo(auth.currentUser.photoURL);
       await setSkyWay(auth.currentUser);
     });
@@ -378,10 +391,6 @@ export default defineComponent({
     const onVideo = (event) => {
       console.log(event, "ビデオ");
     };
-    const onScreenSharing = (event) => {
-      console.log(event, "画面共有");
-    };
-
     return {
       peer,
       isJoin,
@@ -392,7 +401,7 @@ export default defineComponent({
       onLeave,
       onMute,
       onVideo,
-      onScreenSharing,
+      onClickStartScreenShare,
     };
   },
 });
