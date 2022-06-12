@@ -155,7 +155,6 @@ export default defineComponent({
     height: 50px;
     border-radius: 23px;
     padding: 0 23px;
-    // font-family: "Open Sans", sans-serif;
     font-size: 1em;
     letter-spacing: 0.05em;
     transition: background 0.3s ease-in-out;
