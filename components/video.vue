@@ -43,7 +43,7 @@
       @leave="$emit('leave')"
       @mute="$emit('mute', $event)"
       @video="$emit('video', $event)"
-      @scree-sharing="$emit('scree-sharing', $event)"
+      @screen-sharing="$emit('screen-sharing', $event)"
     >
     </VideoFooter>
   </div>
@@ -68,7 +68,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["click", "select-avatar", "leave", "mute", "scree-sharing", "video"],
+  emits: ["click", "select-avatar", "leave", "mute", "screen-sharing", "video"],
   components: VideoFooter,
   setup() {},
 });

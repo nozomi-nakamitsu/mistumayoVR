@@ -32,7 +32,7 @@
       <div>
         <!-- TODO: 後でアイコンパスを修正する -->
         <AppIcon
-          :icon="isScreenSharing ? faLaptoplash : faLaptop"
+          :icon="faLaptop"
           :color="isScreenSharing ? 'white' : 'gray'"
         ></AppIcon>
       </div>
@@ -73,6 +73,7 @@ export default defineComponent({
       }
       if (type === "screenSharing") {
         isScreenSharing.value = !isScreenSharing.value;
+        console.log("Aaa")
         emit("screen-sharing", isScreenSharing);
       }
       if (type === "video") {
