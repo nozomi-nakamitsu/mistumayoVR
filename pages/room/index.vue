@@ -6,7 +6,9 @@
     <div class="room">
       <div class="title">ROOM</div>
       <div class="list" v-for="(room, key) in rooms" :key="key">
-        <div>{{ room.name }}</div>
+        <div @click="$router.push(`room_video/${roomName}`)">
+          {{ room.name }}
+        </div>
         <div class="date">{{ room.dateTime }}</div>
         <div class="copy" @click="copyUrl(room.name)">copy</div>
       </div>
@@ -19,6 +21,7 @@ import {
   defineComponent,
   onMounted,
   ref,
+  useRouter,
   watchEffect,
 } from "@nuxtjs/composition-api";
 import { initializeApp } from "firebase/app";
@@ -27,6 +30,7 @@ import { getFirestore, collection, getDocs } from "firebase/firestore";
 export default defineComponent({
   name: "ListRoomPage",
   setup() {
+    const router = useRouter();
     const rooms = ref([]);
     const roomPath = ref();
     const isAlertVisible = ref(false);
@@ -87,10 +91,9 @@ export default defineComponent({
 .list-room-container {
   max-width: 720px;
   position: relative;
-  padding-top: 100px;
   width: 100%;
   height: 100vh;
-  margin: auto;
+  margin: 200px auto;
 
   > .room > .title {
     margin: 0 0 10px 0;
