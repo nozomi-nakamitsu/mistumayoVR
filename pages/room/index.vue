@@ -3,11 +3,13 @@
     <v-alert v-if="isAlertVisible" color="green" type="success"
       >URLをコピーしました</v-alert
     >
-    <h1>ROOM</h1>
-    <div class="list" v-for="(room, key) in rooms" :key="key">
-      <div>{{ room.name }}</div>
-      <div>{{ room.dateTime }}</div>
-      <div class="copy" @click="copyUrl(room.name)">copy</div>
+    <div class="room">
+      <div class="title">ROOM</div>
+      <div class="list" v-for="(room, key) in rooms" :key="key">
+        <div>{{ room.name }}</div>
+        <div>{{ room.dateTime }}</div>
+        <div class="copy" @click="copyUrl(room.name)">copy</div>
+      </div>
     </div>
   </div>
 </template>
@@ -83,22 +85,43 @@ export default defineComponent({
 
 <style lang="scss">
 .list-room-container {
-  background: #fafafa;
-  margin: 4em auto;
-  padding: 6em;
   max-width: 720px;
+  position: relative;
+  padding-top: 100px;
+  width: 100%;
+  height: 100vh;
+  margin: auto;
 
-  > .list {
-    display: flex;
-    gap: 10px 20px;
+  > .room > .title {
+    margin: 0 0 10px 0;
   }
 
-  > .list > .copy {
+  > .room > .list {
+    display: flex;
+    margin: 0 0 15px 0;
+    align-items: center;
+    padding: 28px;
+    background-color: rgba(5, 5, 41, 0.03);
+    border-radius: 24px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    color: #050529;
+    font-size: 16px;
+    line-height: 22px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  > .room > .list > .copy {
     display: inline-block;
     outline: 0;
     border: 0;
     cursor: pointer;
     color: #fff;
+    margin-left: auto;
     font-weight: 500;
     border-radius: 4px;
     font-size: 14px;
