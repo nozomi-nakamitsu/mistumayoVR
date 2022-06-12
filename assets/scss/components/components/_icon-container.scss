@@ -1,0 +1,11 @@
+.icon-container {
+  &.gray {
+    color: $gray;
+  }
+  &.white {
+    color: $white;
+  }
+  &.phone {
+    transform: rotate(135deg);
+  }
+}
