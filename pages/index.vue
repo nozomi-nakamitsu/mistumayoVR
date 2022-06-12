@@ -1,8 +1,16 @@
 <template>
   <div class="index-container">
-    <h1>VR VIDEO</h1>
-    <div class="button-panel">
-      <div id="auth"></div>
+    <div class="form">
+      <h1>Welcome !</h1>
+      <div class="lead">Please login with Google</div>
+      <div class="button-panel">
+        <div id="auth"></div>
+      </div>
+      <div class="footer">
+        By clicking “Continue” above, you acknowledge that you have read and
+        understood, and agree to SpatialChat’s Privacy Policy and Terms of
+        Service.
+      </div>
     </div>
   </div>
 </template>
@@ -69,7 +77,7 @@ export default defineComponent({
         // NOTE: ログインユーザーの名前は仮置き
         const signOutMessage = `
           <p>Hello, ${user.displayName}!<\/p>
-          <button class="button" type="submit"  onClick="signOut()">SIGN OUT<\/button>
+          <button class="button" type="submit"  onClick="signOut()">Sign out<\/button>
           `;
         document.getElementById("auth").innerHTML = signOutMessage;
 
@@ -87,7 +95,7 @@ export default defineComponent({
         router.push(ROOM_ROUTES.create.path);
       } else {
         const signInMessage = `
-            <button class="button" type="submit"  onClick="signIn()">SIGN IN WITH GOOGLE<\/button>
+            <button class="button" type="submit"  onClick="signIn()">Continue<\/button>
             `;
         document.getElementById("auth").innerHTML = signInMessage;
       }
@@ -98,10 +106,13 @@ export default defineComponent({
 
 <style lang="scss">
 .index-container {
-  background: #fafafa;
-  margin: 15em auto;
-  padding: 4em;
-  max-width: 370px;
+  position: relative;
+  padding-top: 300px;
+  background: url("/resource/background-img.jpg");
+  background-position: center;
+  background-size: cover;
+  width: 100%;
+  height: 100vh;
 
   > h1 {
     text-align: center;
@@ -109,8 +120,21 @@ export default defineComponent({
     font-size: 1.5em;
   }
 
-  > form {
-    padding: 0 1.5em;
+  > .form {
+    margin: auto;
+    max-width: 370px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    padding: 60px;
+    border-radius: 24px;
+  }
+
+  > .form > .lead {
+    color: rgba(5, 5, 41, 0.45);
+    margin-top: 8px;
+    flex-shrink: 0;
   }
 
   .form-item {
@@ -118,45 +142,37 @@ export default defineComponent({
     width: 100%;
   }
 
-  .form-item input {
-    background: #fafafa;
-    border: none;
-    border-bottom: 2px solid #e9e9e9;
-    color: #666;
-    font-family: "Open Sans", sans-serif;
-    font-size: 1em;
-    height: 50px;
-    transition: border-color 0.3s;
-    width: 100%;
-  }
-
-  .form-item input:focus {
-    border-bottom: 2px solid #c0c0c0;
-    outline: none;
-  }
-
   .button-panel {
     margin: 2em 0 0;
     width: 100%;
   }
 
-  .button-panel .button {
-    background: #f16272;
-    border: none;
+  > .form > .button-panel .button {
+    background-color: #5727e7;
+    border: 1px solid transparent;
     color: #fff;
     cursor: pointer;
     height: 50px;
-    font-family: "Open Sans", sans-serif;
+    border-radius: 23px;
+    padding: 0 23px;
+    // font-family: "Open Sans", sans-serif;
     font-size: 1em;
     letter-spacing: 0.05em;
-    text-align: center;
-    text-transform: uppercase;
     transition: background 0.3s ease-in-out;
     width: 100%;
+
+    &:hover {
+      filter: opacity(85%);
+    }
   }
 
-  .button:hover {
-    background: #ee3e52;
+  > .form > .footer {
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.01em;
+    color: rgba(5, 5, 41, 0.45);
+    margin: 15px 0 0 0;
+    flex-shrink: 0;
   }
 }
 </style>
