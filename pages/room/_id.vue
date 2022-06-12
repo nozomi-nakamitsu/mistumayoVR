@@ -16,7 +16,6 @@ import {
   defineComponent,
   onMounted,
   ref,
-  useFetch,
   useRoute,
   useRouter,
 } from "@nuxtjs/composition-api";
@@ -57,18 +56,9 @@ export default defineComponent({
     };
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const auth = getAuth();
 
     const roomId = Route.value.params.id;
     const docId = ref();
-
-    useFetch(async () => {
-      const q = query(collection(db, "room"), where("name", "==", roomId));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        docId.value = doc.id;
-      });
-    });
 
     const roomRef = {
       name: roomId,
@@ -80,14 +70,14 @@ export default defineComponent({
     let room;
     const peer = ref();
     const vrm = ref(null);
-    const setSkyWay = () => {
+    const setSkyWay = (auth) => {
       const API_KEY = process.env.SKY_WAY_API_KEY;
 
       peer.value = new Peer({
         key: API_KEY,
         user: {
-          name: auth.currentUser.displayName,
-          icon: auth.currentUser.photoURL,
+          name: auth.displayName,
+          icon: auth.photoURL,
         },
       });
       peer.value.on("open", (pid) => {
@@ -101,7 +91,6 @@ export default defineComponent({
       return "/resource/sample2.vrm";
     };
     const initializeVideo = async (avatar) => {
-      // TODO:firestoreからデータを取得する!
       const avatarDom = document.getElementById("avatar-canvas");
       if (avatarDom) {
         avatarDom.remove();
@@ -353,8 +342,16 @@ export default defineComponent({
       window.location.href = `/room/leaved/${roomId}`;
     };
     onMounted(async () => {
-      await initializeVideo("A");
-      await setSkyWay();
+      const auth = getAuth();
+
+      const q = query(collection(db, "room"), where("name", "==", roomId));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        docId.value = doc.id;
+      });
+
+      await initializeVideo(auth.currentUser.photoURL);
+      await setSkyWay(auth.currentUser);
     });
 
     return {
