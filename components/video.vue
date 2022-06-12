@@ -34,13 +34,13 @@
           </div>
         </div>
       </div>
-      <div class="right">
-        <div class="remote-streams" id="js-remote-streams"></div>
+      <div class="remote-streams" id="js-remote-streams">
+        <div class="right" v-if="hasMember"></div>
       </div>
     </div>
     <VideoFooter
       v-if="isJoin"
-      @click="$emit('leave')"
+      @leave="$emit('leave')"
       @mute="$emit('mute', $event)"
       @video="$emit('video', $event)"
       @scree-sharing="$emit('scree-sharing', $event)"

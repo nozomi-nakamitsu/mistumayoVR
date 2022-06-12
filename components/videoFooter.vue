@@ -37,13 +37,9 @@
         ></AppIcon>
       </div>
     </button>
-    <button class="video-button -leave" @click="onClick('leave')">
+    <button class="video-button -leave" @click="$emit('leave')">
       <div>
-        <AppIcon
-          :icon="faPhone"
-          color="white"
-          class="phone"
-        ></AppIcon>
+        <AppIcon :icon="faPhone" color="white" class="phone"></AppIcon>
       </div>
     </button>
   </div>
@@ -62,11 +58,7 @@ import {
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
 export default defineComponent({
-  props: {
-    icon: {
-      required: true,
-    },
-  },
+  props: {},
   components: AppIcon,
   emits: ["leave", "mute", "video", "screen-sharing"],
   setup(_, { emit }) {
