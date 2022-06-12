@@ -1,5 +1,8 @@
 <template>
   <div v-if="rooms" class="list-room-container">
+    <v-alert v-if="isAlertVisible" color="green" type="success"
+      >URLをコピーしました</v-alert
+    >
     <h1>ROOM</h1>
     <div class="list" v-for="(room, key) in rooms" :key="key">
       <div>{{ room.name }}</div>
@@ -10,7 +13,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "@nuxtjs/composition-api";
+import {
+  defineComponent,
+  onMounted,
+  ref,
+  watchEffect,
+} from "@nuxtjs/composition-api";
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 
@@ -19,6 +27,7 @@ export default defineComponent({
   setup() {
     const rooms = ref([]);
     const roomPath = ref();
+    const isAlertVisible = ref(false);
 
     onMounted(async () => {
       // TODO: 共通化する
@@ -37,7 +46,6 @@ export default defineComponent({
       const querySnapshot = await getDocs(collection(db, "room"));
       querySnapshot.forEach((doc) => {
         // TODO:日付のフォーマットを変換したい
-
         rooms.value = [...rooms.value, doc.data()];
       });
     });
@@ -45,17 +53,29 @@ export default defineComponent({
     const copyUrl = async (roomName) => {
       roomPath.value = createRoomPath(roomName);
       await navigator.clipboard.writeText(roomPath.value);
+      isAlertVisible.value = true;
     };
 
     const createRoomPath = (roomName) => {
+      // TODO 本当はroutes.tsで定数管理したパスを使いたいのにファイルが呼び出せないのでべた書きしてる
       return process.env.NODE_ENV === "development"
         ? `${process.env.LOCAL_URL}/room/room_video/${roomName}`
         : `${process.env.APP_URL}/room/room_video/${roomName}`;
     };
 
+    // NOTE: アラート非表示のタイミング
+    watchEffect(() => {
+      if (isAlertVisible.value) {
+        setTimeout(() => {
+          isAlertVisible.value = false;
+        }, 5000);
+      }
+    });
+
     return {
       rooms,
       copyUrl,
+      isAlertVisible,
     };
   },
 });
