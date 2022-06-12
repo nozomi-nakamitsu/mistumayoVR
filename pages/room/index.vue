@@ -7,7 +7,7 @@
       <div class="title">ROOM</div>
       <div class="list" v-for="(room, key) in rooms" :key="key">
         <div>{{ room.name }}</div>
-        <div>{{ room.dateTime }}</div>
+        <div class="date">{{ room.dateTime }}</div>
         <div class="copy" @click="copyUrl(room.name)">copy</div>
       </div>
     </div>
@@ -97,7 +97,8 @@ export default defineComponent({
   }
 
   > .room > .list {
-    display: flex;
+    display: grid;
+    grid-template-columns: 350px repeat(2, 1fr);
     margin: 0 0 15px 0;
     align-items: center;
     padding: 28px;
@@ -113,6 +114,10 @@ export default defineComponent({
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  > .room > .list > .date {
+    margin-left: 50px;
   }
 
   > .room > .list > .copy {
