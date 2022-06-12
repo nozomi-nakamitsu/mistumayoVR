@@ -378,7 +378,6 @@ export default defineComponent({
       console.log(event, "event");
       // 自身ののストリーム
       const $video = document.getElementById("webcam-video");
-      const audioTrack = $video.srcObject.getAudioTracks();
       $video.srcObject
         .getAudioTracks()
         .forEach((track) => (track.enabled = !event.value));
