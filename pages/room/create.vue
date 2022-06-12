@@ -2,9 +2,16 @@
   <div class="create-room-container">
     <h1>CREATE ROOM</h1>
     <form class="form" @submit.prevent="createRoom">
-      <input type="text" v-model="name" class="input" />
-      <input type="datetime-local" v-model="date" />
-      <button type="submit" class="button">ROOMを作成</button>
+      <label class="section">
+        <span class="title">Room name</span>
+        <input type="text" v-model="name" class="text" />
+      </label>
+      <label class="date">
+        <input type="datetime-local" v-model="date" />
+      </label>
+      <div class="footer">
+        <button type="submit" class="button">Continue</button>
+      </div>
     </form>
   </div>
 </template>
@@ -57,20 +64,69 @@ export default defineComponent({
 
 <style lang="scss">
 .create-room-container {
-  background: #fafafa;
-  margin: 4em auto;
-  padding: 6em;
-  max-width: 720px;
+  width: 460px;
+  max-width: 100%;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  border-radius: 24px;
+  background-color: #fff;
+  color: #050529;
+  margin: auto;
 
-  > .form > .input {
-    border: 1px solid gray;
-    border-radius: 5px;
+  > h1 {
+    margin-bottom: 30px;
   }
 
-  > .form > .button {
-    background: #f16272;
-    padding: 5px;
-    font-size: 18px;
+  > .form {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-gap: 24px;
+  }
+
+  > .form > .section > .title {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  > .form > .section > .text {
+    width: 100%;
+    height: 48px;
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    color: #050529;
+    background-color: rgba(5, 5, 41, 0.03);
+    border: 1px solid transparent;
+    outline: none;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+    word-break: normal;
+  }
+
+  > .form > .date {
+    width: 100%;
+    height: 48px;
+    padding-left: 30px;
+    padding-top: 10px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    color: #050529;
+    background-color: rgba(5, 5, 41, 0.03);
+    border: 1px solid transparent;
+    outline: none;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+    word-break: normal;
+  }
+
+  > .form > .footer > .button {
+    width: 100%;
+    background-color: #5727e7;
+    border: 1px solid transparent;
+    color: #fff;
+    height: 56px;
+    border-radius: 23px;
+    padding: 0 23px;
   }
 }
 </style>

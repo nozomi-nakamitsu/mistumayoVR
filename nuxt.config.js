@@ -43,6 +43,8 @@ export default {
   build: {},
 
   env: {
+    APP_URL: process.env.APP_URL,
+    LOCAL_URL: process.env.LOCAL_URL,
     API_KEY: process.env.API_KEY,
     AUTH_DOMAIN: process.env.AUTH_DOMAIN,
     PROJECT_ID: process.env.PROJECT_ID,
