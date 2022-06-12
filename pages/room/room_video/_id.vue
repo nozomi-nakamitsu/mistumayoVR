@@ -28,21 +28,44 @@ import { VRM, VRMSchema } from "@pixiv/three-vrm";
 import * as faceapi from "face-api.js";
 import Peer from "skyway-js";
 import Video from "@/components/video.vue";
+import { getAuth } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 
 export default defineComponent({
+  name: "RoomDetailPage",
   components: {
     Video,
   },
-  props: {},
   setup() {
     const remoteVideos = ref();
     const Route = useRoute();
     const Router = useRouter();
 
+    const firebaseConfig = {
+      apiKey: process.env.API_KEY,
+      authDomain: process.env.AUTH_DOMAIN,
+      projectId: process.env.PROJECT_ID,
+      storageBucket: process.env.STORAGE_BUCKET,
+      messagingSenderId: process.env.MESSAGING_SENDER_ID,
+      appId: process.env.APP_ID,
+      measurementId: process.env.MEASUREMENT_ID,
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
     const roomId = Route.value.params.id;
+    const docId = ref();
+
     const roomRef = {
-      name: "あああああ",
-      id: roomId,
+      name: roomId,
+      id: docId.value,
     };
 
     const isJoin = ref(false);
@@ -50,12 +73,15 @@ export default defineComponent({
     let room;
     const peer = ref();
     const vrm = ref(null);
-    const setSkyWay = () => {
+    const setSkyWay = (auth) => {
       const API_KEY = process.env.SKY_WAY_API_KEY;
 
       peer.value = new Peer({
         key: API_KEY,
-        user: { name: "みっつん", icon: "aaa.jpeg" },
+        user: {
+          name: auth.displayName,
+          icon: auth.photoURL,
+        },
       });
       peer.value.on("open", (pid) => {
         console.log(`PeerId: ${pid}`);
@@ -68,7 +94,6 @@ export default defineComponent({
       return "/resource/sample2.vrm";
     };
     const initializeVideo = async (avatar) => {
-      // TODO:firestoreからデータを取得する!
       const avatarDom = document.getElementById("avatar-canvas");
       if (avatarDom) {
         avatarDom.remove();
@@ -335,8 +360,16 @@ export default defineComponent({
       window.location.href = `/room/leaved/${roomId}`;
     };
     onMounted(async () => {
-      await initializeVideo("A");
-      await setSkyWay();
+      const auth = getAuth();
+
+      const q = query(collection(db, "room"), where("name", "==", roomId));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        docId.value = doc.id;
+      });
+
+      await initializeVideo(auth.currentUser.photoURL);
+      await setSkyWay(auth.currentUser);
     });
 
     const onMute = (event) => {
