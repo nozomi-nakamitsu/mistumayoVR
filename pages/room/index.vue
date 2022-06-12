@@ -5,8 +5,11 @@
     >
     <div class="room">
       <div class="title">ROOM</div>
+      <div class="list font" @click="$router.push('/room/create')">
+        Create Room
+      </div>
       <div class="list" v-for="(room, key) in rooms" :key="key">
-        <div @click="$router.push(`room_video/${roomName}`)">
+        <div class="name" @click="$router.push(`room_video/${roomName}`)">
           {{ room.name }}
         </div>
         <div class="date">{{ room.dateTime }}</div>
@@ -93,9 +96,10 @@ export default defineComponent({
   position: relative;
   width: 100%;
   height: 100vh;
-  margin: 200px auto;
+  margin: 100px auto;
 
   > .room > .title {
+    font-size: 24px;
     margin: 0 0 10px 0;
   }
 
@@ -117,6 +121,22 @@ export default defineComponent({
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  > .room > .font {
+    cursor: pointer;
+    color: #5727e7;
+    &:hover {
+      opacity: 75%;
+    }
+  }
+
+  > .room > .list > .name {
+    cursor: pointer;
+
+    &:hover {
+      color: gray;
+    }
   }
 
   > .room > .list > .date {
