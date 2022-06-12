@@ -16,6 +16,7 @@ import {
   defineComponent,
   onMounted,
   ref,
+  useFetch,
   useRoute,
   useRouter,
 } from "@nuxtjs/composition-api";
@@ -25,6 +26,15 @@ import { VRM, VRMSchema } from "@pixiv/three-vrm";
 import * as faceapi from "face-api.js";
 import Peer from "skyway-js";
 import Video from "@/components/video.vue";
+import { getAuth } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 
 export default defineComponent({
   components: {
@@ -36,10 +46,33 @@ export default defineComponent({
     const Route = useRoute();
     const Router = useRouter();
 
+    const firebaseConfig = {
+      apiKey: process.env.API_KEY,
+      authDomain: process.env.AUTH_DOMAIN,
+      projectId: process.env.PROJECT_ID,
+      storageBucket: process.env.STORAGE_BUCKET,
+      messagingSenderId: process.env.MESSAGING_SENDER_ID,
+      appId: process.env.APP_ID,
+      measurementId: process.env.MEASUREMENT_ID,
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
     const roomId = Route.value.params.id;
+    const docId = ref();
+
+    useFetch(async () => {
+      const q = query(collection(db, "room"), where("name", "==", roomId));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        docId.value = doc.id;
+      });
+    });
+
     const roomRef = {
-      name: "あああああ",
-      id: roomId,
+      name: roomId,
+      id: docId.value,
     };
 
     const isJoin = ref(false);
@@ -52,7 +85,10 @@ export default defineComponent({
 
       peer.value = new Peer({
         key: API_KEY,
-        user: { name: "みっつん", icon: "aaa.jpeg" },
+        user: {
+          name: auth.currentUser.displayName,
+          icon: auth.currentUser.photoURL,
+        },
       });
       peer.value.on("open", (pid) => {
         console.log(`PeerId: ${pid}`);
