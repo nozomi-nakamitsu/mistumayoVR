@@ -36,10 +36,10 @@ import {
 } from "firebase/firestore";
 
 export default defineComponent({
+  name: "RoomDetailPage",
   components: {
     Video,
   },
-  props: {},
   setup() {
     const remoteVideos = ref();
     const Route = useRoute();
