@@ -127,6 +127,8 @@ export default defineComponent({
       const $body = document.getElementById("body");
       const $avatarCanvas = renderer.domElement;
       $avatarCanvas.id = "avatar-canvas";
+      $avatarCanvas.class = "my-avatar-canvas";
+
       $body.insertBefore($avatarCanvas, $body.firstChild);
       const gridHelper = new THREE.GridHelper(10, 10);
       scene.add(gridHelper);
@@ -308,18 +310,29 @@ export default defineComponent({
       room.on("open", async () => {
         console.log(`join: ${room.name}`);
         console.log(room);
-
+        hasMember.value = !!room.members.length;
         room.on("stream", async (stream) => {
           console.log("stream!!!!!!!");
+          hasMember.value = !!room.members.length;
+          const newDom = document.createElement("div");
           const newVideo = document.createElement("video");
+          const userName = document.createElement("p");
+          // newDom.append(newVideo);
+          userName.textContent = stream.peerId;
           newVideo.srcObject = stream;
           newVideo.playsInline = true;
           // mark peerId to find it later at peerLeave event
+          newDom.setAttribute("class", "remote-item");
+          newDom.setAttribute("data-remote-item-id", stream.peerId);
           newVideo.setAttribute("data-peer-id", stream.peerId);
-          remoteVideos.value.append(newVideo);
+          newVideo.setAttribute("class", "remote-video");
+          newDom.append(newVideo);
+          newDom.append(userName);
+          remoteVideos.value.append(newDom);
           await newVideo.play().catch(console.error);
         });
         room.on("close", async () => {
+          hasMember.value = !!room.members.length;
           Array.from(remoteVideos.value.children).forEach((remoteVideo) => {
             remoteVideo.srcObject.getTracks().forEach((track) => track.stop());
             remoteVideo.srcObject = null;
@@ -327,8 +340,9 @@ export default defineComponent({
           });
         });
         room.on("peerLeave", (peerId) => {
+          hasMember.value = !!room.members.length;
           const leavedPeer = document.querySelector(
-            `[data-peer-id="${peerId}"]`
+            `[data-remote-item-id="${peerId}"]`
           );
           console.log("leavedPeer", leavedPeer);
           if (leavedPeer) {
@@ -338,6 +352,7 @@ export default defineComponent({
       });
     };
     const onLeave = async () => {
+      console.log("a");
       await room.close();
       await peer.value.destroy();
       peer.value = null;
