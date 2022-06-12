@@ -34,8 +34,11 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [],
+  modules: [["nuxt-fontawesome"]],
 
+  fontawesome: {
+    component: "fa",
+  },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
 

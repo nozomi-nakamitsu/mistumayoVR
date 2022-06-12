@@ -38,14 +38,21 @@
         <div class="remote-streams" id="js-remote-streams"></div>
       </div>
     </div>
-    <div class="footer-container" v-if="isJoin">
-      <button @click="$emit('leave')">退出</button>
-    </div>
+    <VideoFooter
+      v-if="isJoin"
+      @click="$emit('leave')"
+      @mute="$emit('mute', $event)"
+      @video="$emit('video', $event)"
+      @scree-sharing="$emit('scree-sharing', $event)"
+    >
+    </VideoFooter>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, PropType } from "@nuxtjs/composition-api";
+import { defineComponent } from "@nuxtjs/composition-api";
+import VideoFooter from "@/components/videoFooter";
+
 export default defineComponent({
   props: {
     isJoin: {
@@ -61,7 +68,8 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["click", "select-avatar", "leave"],
+  emits: ["click", "select-avatar", "leave", "mute", "scree-sharing", "video"],
+  components: VideoFooter,
   setup() {},
 });
 </script>

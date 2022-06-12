@@ -7,6 +7,9 @@
       :room="roomRef"
       @select-avatar="initializeVideo"
       @leave="onLeave"
+      @mute="onMute"
+      @video="onVideo"
+      @scree-sharing="onScreeSharing"
     ></Video>
   </div>
 </template>
@@ -354,6 +357,16 @@ export default defineComponent({
       await setSkyWay(auth.currentUser);
     });
 
+    const onMute = (event) => {
+      console.log(event, "ミュート");
+    };
+    const onVideo = (event) => {
+      console.log(event, "ビデオ");
+    };
+    const onScreeSharing = (event) => {
+      console.log(event, "画面共有");
+    };
+
     return {
       peer,
       isJoin,
@@ -362,6 +375,9 @@ export default defineComponent({
       roomRef,
       initializeVideo,
       onLeave,
+      onMute,
+      onVideo,
+      onScreeSharing,
     };
   },
 });

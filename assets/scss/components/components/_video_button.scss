@@ -1,0 +1,20 @@
+.video-button {
+  background-color: $white-gray;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  margin: 8px;
+  &.-isActive {
+    background-color: $red;
+  }
+  &.-leave {
+    background-color: $red;
+    width: 60px;
+    height: 40px;
+    border-radius: 20px;
+  }
+  &.phone {
+    transform: rotate(45deg);
+  }
+}
