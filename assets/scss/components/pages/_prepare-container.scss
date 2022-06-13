@@ -19,9 +19,7 @@
       &.-no-member {
         width: 100%;
         > .video {
-          // TODO: 仮なので後で消す
           width: 800px;
-          background-color: $red;
           height: 600px;
         }
       }
@@ -47,7 +45,7 @@
   > .container > .left > .video {
     // TODO: 仮なので後で消す
     width: 500px;
-    background-color: $red;
+
     height: 300px;
   }
   > .container > .right > .title {

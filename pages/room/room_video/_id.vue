@@ -91,10 +91,7 @@ export default defineComponent({
       return "/resource/sample2.vrm";
     };
     // 画面共有の設定
-    let screenShareRoomInstance;
     let screenShareStream;
-    const remoteScreens = document.getElementById("js-remote-screen-streams");
-    let localVideo;
     const initializeVideo = async (avatar) => {
       const avatarDom = document.getElementById("avatar-canvas");
       if (avatarDom) {
@@ -289,7 +286,10 @@ export default defineComponent({
       await render();
     };
 
-    const onJoin = async (screenShareStream) => {
+    /**
+     *部屋入室の処理
+     */
+    const onJoin = async () => {
       remoteVideos.value = document.getElementById("js-remote-streams");
       isJoin.value = true;
       if (roomId === "") {
@@ -309,12 +309,6 @@ export default defineComponent({
         mode: "sfu",
         stream,
       });
-
-      // // // 画面共有の設定
-      localVideo = document.getElementById("js-local-stream");
-      localVideo.muted = true;
-      localVideo.playsInline = true;
-
       room.on("open", async () => {
         console.log(room);
         hasMember.value = !!room.members.length;
@@ -324,7 +318,6 @@ export default defineComponent({
           const newDom = document.createElement("div");
           const newVideo = document.createElement("video");
           const userName = document.createElement("p");
-          // newDom.append(newVideo);
           userName.textContent = stream.peerId;
           newVideo.srcObject = stream;
           newVideo.playsInline = true;
@@ -358,15 +351,26 @@ export default defineComponent({
         });
       });
     };
+    /**
+     *画面共有の処理
+     */
     async function onClickStartScreenShare(event) {
       console.log(event, "画面共有");
+      const $video = document.getElementById("webcam-video");
+      const $avatarCanvas = document.getElementById("avatar-canvas");
+
       screenShareStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
       });
-      localVideo.srcObject = screenShareStream;
-      await localVideo.play().catch(console.error);
+      $video.srcObject = screenShareStream;
+      $video.style.display = "block";
+      $avatarCanvas.style.display = "none";
+      await $video.play().catch(console.error);
       room.replaceStream(screenShareStream);
     }
+    /**
+     *部屋を退出する処理
+     */
     const onLeave = async () => {
       await room.close();
       await peer.value.destroy();
