@@ -9,7 +9,7 @@
       @leave="onLeave"
       @mute="onMute"
       @video="onVideo"
-      @screen-sharing="onClickStartScreenShare"
+      @screen-sharing="onScreenShare"
     ></Video>
   </div>
 </template>
@@ -92,6 +92,11 @@ export default defineComponent({
     };
     // 画面共有の設定
     let screenShareStream;
+    let stream;
+
+    /**
+     *アバターを描画する
+     */
     const initializeVideo = async (avatar) => {
       const avatarDom = document.getElementById("avatar-canvas");
       if (avatarDom) {
@@ -299,7 +304,7 @@ export default defineComponent({
         return console.warn("A VRM hasn't been loaded yet");
       }
       const $avatarCanvas = document.querySelector("#avatar-canvas");
-      const stream = $avatarCanvas.captureStream(30);
+      stream = $avatarCanvas.captureStream(30);
       const audioStream = await navigator.mediaDevices.getUserMedia({
         audio: true,
       });
@@ -321,7 +326,6 @@ export default defineComponent({
           userName.textContent = stream.peerId;
           newVideo.srcObject = stream;
           newVideo.playsInline = true;
-          // mark peerId to find it later at peerLeave event
           newDom.setAttribute("class", "remote-item");
           newDom.setAttribute("data-remote-item-id", stream.peerId);
           newVideo.setAttribute("data-peer-id", stream.peerId);
@@ -352,13 +356,21 @@ export default defineComponent({
       });
     };
     /**
-     *画面共有の処理
+     *画面共有ボタンを推したときに発火
      */
-    async function onClickStartScreenShare(event) {
-      console.log(event, "画面共有");
+    async function onScreenShare(isShare) {
+      if (isShare.value) {
+        onClickStartScreenShare();
+        return;
+      }
+      onClickStopScreenShare();
+    }
+    /**
+     *画面共有処理
+     */
+    async function onClickStartScreenShare() {
       const $video = document.getElementById("webcam-video");
       const $avatarCanvas = document.getElementById("avatar-canvas");
-
       screenShareStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
       });
@@ -367,6 +379,22 @@ export default defineComponent({
       $avatarCanvas.style.display = "none";
       await $video.play().catch(console.error);
       room.replaceStream(screenShareStream);
+    }
+    /**
+     *画面共有を解除する処理
+     */
+    async function onClickStopScreenShare() {
+      const $video = document.getElementById("webcam-video");
+      const $avatarCanvas = document.getElementById("avatar-canvas");
+      let screenShareStreamTrack = await screenShareStream.getTracks();
+      screenShareStreamTrack.forEach(function (track) {
+        track.stop();
+      });
+      screenShareStream = null;
+      $video.style.display = "none";
+      $avatarCanvas.style.display = "block";
+      await initializeVideo();
+      room.replaceStream(stream);
     }
     /**
      *部屋を退出する処理
@@ -405,7 +433,7 @@ export default defineComponent({
       onLeave,
       onMute,
       onVideo,
-      onClickStartScreenShare,
+      onScreenShare,
     };
   },
 });
