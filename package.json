@@ -14,6 +14,7 @@
     "@fortawesome/vue-fontawesome": "^2.0.6",
     "@pixiv/three-vrm": "^0.6.11",
     "core-js": "^3.19.3",
+    "dayjs": "^1.11.3",
     "dotenv": "^16.0.1",
     "face-api.js": "^0.22.2",
     "firebase": "^9.8.2",

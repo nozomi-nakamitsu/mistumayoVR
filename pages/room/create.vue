@@ -66,7 +66,7 @@ export default defineComponent({
 .create-room-container {
   width: 460px;
   max-width: 100%;
-  padding-top: 40px;
+  padding-top: 240px;
   padding-bottom: 40px;
   border-radius: 24px;
   background-color: #fff;
