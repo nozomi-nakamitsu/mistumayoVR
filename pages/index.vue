@@ -74,7 +74,7 @@ export default defineComponent({
 
     auth.onAuthStateChanged(async (user) => {
       if (user) {
-        // NOTE: ログインユーザーの名前は仮置き
+        // TODO: ヘッダーの作成をしたらログインユーザ名は不要
         const signOutMessage = `
           <p>Hello, ${user.displayName}!<\/p>
           <button class="button" type="submit"  onClick="signOut()">Sign out<\/button>
@@ -87,7 +87,6 @@ export default defineComponent({
             name: user.displayName,
             icon: user.photoURL,
           });
-          console.log(docRef, "できたっぽい");
         } catch (e) {
           console.error(e);
         }

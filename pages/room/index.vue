@@ -9,10 +9,16 @@
         Create Room
       </div>
       <div class="list" v-for="(room, key) in rooms" :key="key">
-        <div class="name" @click="$router.push(`room_video/${roomName}`)">
+        <div class="name" @click="$router.push(`room_video/${room.name}`)">
           {{ room.name }}
         </div>
-        <div class="date">{{ room.dateTime }}</div>
+        <div class="date">
+          {{
+            room.dateTime
+              ? dayjs(room.dateTime).format("YYYY-MM-DD HH:mm:ss")
+              : ""
+          }}
+        </div>
         <div class="copy" @click="copyUrl(room.name)">copy</div>
       </div>
     </div>
@@ -27,8 +33,15 @@ import {
   useRouter,
   watchEffect,
 } from "@nuxtjs/composition-api";
+import dayjs from "dayjs";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 
 export default defineComponent({
   name: "ListRoomPage",
@@ -37,6 +50,7 @@ export default defineComponent({
     const rooms = ref([]);
     const roomPath = ref();
     const isAlertVisible = ref(false);
+    const dialog = ref(false);
 
     onMounted(async () => {
       // TODO: 共通化する
@@ -51,10 +65,10 @@ export default defineComponent({
       };
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
-
-      const querySnapshot = await getDocs(collection(db, "room"));
+      const querySnapshot = await getDocs(
+        query(collection(db, "room"), orderBy("dateTime", "desc"))
+      );
       querySnapshot.forEach((doc) => {
-        // TODO:日付のフォーマットを変換したい
         rooms.value = [...rooms.value, doc.data()];
       });
     });
@@ -85,6 +99,8 @@ export default defineComponent({
       rooms,
       copyUrl,
       isAlertVisible,
+      dialog,
+      dayjs,
     };
   },
 });
