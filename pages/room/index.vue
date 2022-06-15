@@ -69,7 +69,7 @@ export default defineComponent({
         query(collection(db, "room"), orderBy("dateTime", "desc"))
       );
       querySnapshot.forEach((doc) => {
-        doc.data().dateTime = rooms.value = [...rooms.value, doc.data()];
+        rooms.value = [...rooms.value, doc.data()];
       });
     });
 
