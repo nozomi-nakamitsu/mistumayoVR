@@ -5,7 +5,7 @@
       <div class="item">
         <button
           class="common-button -outline"
-          @click="redirect(`/room/${Route.params.id}`)"
+          @click="redirect(`/room/room_video/${Route.params.id}`)"
         >
           再参加
         </button>

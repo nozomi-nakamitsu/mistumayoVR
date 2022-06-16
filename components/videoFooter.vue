@@ -73,7 +73,6 @@ export default defineComponent({
       }
       if (type === "screenSharing") {
         isScreenSharing.value = !isScreenSharing.value;
-        console.log("Aaa")
         emit("screen-sharing", isScreenSharing);
       }
       if (type === "video") {
