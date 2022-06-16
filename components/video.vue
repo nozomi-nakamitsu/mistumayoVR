@@ -4,7 +4,7 @@
       <div class="left" id="body" :class="{ '-no-member': !hasMember }">
         <video class="video" id="webcam-video" style="display: none"></video>
         <canvas id="landmarks" style="display: none"></canvas>
-        <p v-if="isJoin">あなた</p>
+        <p v-if="isJoin" id="maximize-screen-user-name">あなた</p>
       </div>
       <div class="right" v-if="!isJoin">
         <p class="title">{{ room.name }}</p>

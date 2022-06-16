@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import {
   defineComponent,
   onMounted,
@@ -37,7 +37,6 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-
 export default defineComponent({
   name: "RoomDetailPage",
   components: {
@@ -131,9 +130,11 @@ export default defineComponent({
       const $body = document.getElementById("body");
       const $avatarCanvas = renderer.domElement;
       $avatarCanvas.id = "avatar-canvas";
-      $avatarCanvas.class = "my-avatar-canvas";
-
-      $body.insertBefore($avatarCanvas, $body.firstChild);
+      $avatarCanvas.setAttribute("class", "my-avatar-canvas");
+      const newDom = document.createElement("div");
+      newDom.setAttribute("class", "my-avatar-canvas-wrapper");
+      newDom.append($avatarCanvas);
+      $body.append(newDom);
       const gridHelper = new THREE.GridHelper(10, 10);
       scene.add(gridHelper);
       const axesHelper = new THREE.AxesHelper(5);
@@ -290,6 +291,16 @@ export default defineComponent({
       };
       await render();
     };
+    const setMiximizeIcon = (peerId, type) => {
+      const maximizeIcon = document.createElement("img");
+      maximizeIcon.setAttribute("class", "maximizeIcon");
+      maximizeIcon.setAttribute("src", "/resource/maximizeIcon.png");
+      maximizeIcon.setAttribute("data-maxmize-icon-id", peerId);
+      if (type === "currentUser") {
+        maximizeIcon.setAttribute("class", "-currentUser");
+      }
+      return maximizeIcon;
+    };
 
     /**
      *部屋入室の処理
@@ -309,51 +320,72 @@ export default defineComponent({
         audio: true,
       });
       const audioTrack = audioStream.getAudioTracks()[0];
+
       stream.addTrack(audioTrack);
+
       room = peer.value.joinRoom(roomId, {
         mode: "sfu",
         stream,
       });
       room.on("open", async () => {
-        console.log(room);
         hasMember.value = !!room.members.length;
-        room.on("stream", async (stream) => {
-          console.log("stream!!!!!!!");
-          hasMember.value = !!room.members.length;
-          const newDom = document.createElement("div");
-          const newVideo = document.createElement("video");
-          const userName = document.createElement("p");
-          userName.textContent = stream.peerId;
-          newVideo.srcObject = stream;
-          newVideo.playsInline = true;
-          newDom.setAttribute("class", "remote-item");
-          newDom.setAttribute("data-remote-item-id", stream.peerId);
-          newVideo.setAttribute("data-peer-id", stream.peerId);
-          newVideo.setAttribute("class", "remote-video");
-          newDom.append(newVideo);
-          newDom.append(userName);
-          remoteVideos.value.append(newDom);
-          await newVideo.play().catch(console.error);
-        });
-        room.on("close", async () => {
-          hasMember.value = !!room.members.length;
-          Array.from(remoteVideos.value.children).forEach((remoteVideo) => {
-            remoteVideo.srcObject.getTracks().forEach((track) => track.stop());
-            remoteVideo.srcObject = null;
-            remoteVideo.remove();
-          });
-        });
-        room.on("peerLeave", (peerId) => {
-          hasMember.value = !!room.members.length;
-          const leavedPeer = document.querySelector(
-            `[data-remote-item-id="${peerId}"]`
-          );
-          console.log("leavedPeer", leavedPeer);
-          if (leavedPeer) {
-            leavedPeer.remove();
-          }
+      });
+      room.on("stream", async (stream) => {
+        addRemoteVideo(stream);
+      });
+      room.on("close", async () => {
+        hasMember.value = !!room.members.length;
+        Array.from(remoteVideos.value.children).forEach((remoteVideo) => {
+          remoteVideo.srcObject.getTracks().forEach((track) => track.stop());
+          remoteVideo.srcObject = null;
+          remoteVideo.remove();
         });
       });
+      room.on("peerLeave", (peerId) => {
+        hasMember.value = !!room.members.length;
+        const leavedPeer = document.querySelector(
+          `[data-remote-item-id="${peerId}"]`
+        );
+        removeMaximizeVideo(peerId);
+        if (leavedPeer) {
+          leavedPeer.remove();
+        }
+      });
+    };
+    /**
+     *リモートのビデオを右側に表示する
+     */
+    const addRemoteVideo = async (stream) => {
+      hasMember.value = !!room.members.length;
+      const newDom = document.createElement("div");
+      const newVideo = document.createElement("video");
+      const userName = document.createElement("p");
+      userName.textContent = stream.peerId;
+      newVideo.srcObject = stream;
+      newVideo.playsInline = true;
+      newDom.setAttribute("class", "remote-item");
+      newDom.setAttribute("data-remote-item-id", stream.peerId);
+      newVideo.setAttribute("data-peer-id", stream.peerId);
+      newVideo.setAttribute("class", "remote-video");
+      newDom.append(newVideo);
+      newDom.append(userName);
+      const icon = setMiximizeIcon(stream.peerId, "");
+      newDom.append(icon);
+      remoteVideos.value.append(newDom);
+      await newVideo.play().catch(console.error);
+      document
+        .querySelector(`[data-maxmize-icon-id="${stream.peerId}"]`)
+        .addEventListener("click", () => {
+          onMaximize(stream.peerId);
+        });
+    };
+    const removeMaximizeVideo = (peerId) => {
+      const target = document.querySelector(
+        `[data-maxmize-icon-id="${peerId}"]`
+      );
+      if (target) {
+        onMaximizeLocalVideo();
+      }
     };
     /**
      *画面共有ボタンを推したときに発火
@@ -406,6 +438,95 @@ export default defineComponent({
       // わからないのでリロードしてます。
       window.location.href = `/room/leaved/${roomId}`;
     };
+    /**
+     *画面を拡大する
+     */
+    const onMaximize = async (peerId) => {
+      if (isMeClicked(peerId)) {
+        onMaximizeLocalVideo();
+        return;
+      }
+      onMiximizeLocalVideo();
+      onMaximizeRemoteVideo(peerId);
+    };
+    /**
+     *自分の映像を小さくする
+     */
+    const onMiximizeLocalVideo = () => {
+      const localAvatar = document.getElementById("avatar-canvas");
+      localAvatar.classList.add("-mixmize");
+      localAvatar.parentNode.insertBefore(
+        setMiximizeIcon(peer.value.id, "currentUser"),
+        localAvatar.nextElementSibling
+      );
+      document
+        .querySelector(`[data-maxmize-icon-id="${peer.value.id}"]`)
+        .addEventListener("click", () => {
+          onMaximize(peer.value.id);
+        });
+    };
+    /**
+     *自分の映像を大きくする
+     */
+    const onMaximizeLocalVideo = async () => {
+      const localAvatar = document.getElementById("avatar-canvas");
+      localAvatar.classList.remove("-mixmize");
+      document.getElementById("maximize-screen-user-name").textContent =
+        "あなた";
+      const defaultRemoteMaximizeVideo = document.getElementById(
+        "remote-maximize-video"
+      );
+
+      const peerId = defaultRemoteMaximizeVideo.dataset.maximizeId;
+
+      defaultRemoteMaximizeVideo.remove();
+      document
+        .querySelector(`[data-maxmize-icon-id="${peer.value.id}"]`)
+        .remove();
+
+      const remoteItem = document.querySelector(
+        `[data-remote-item-id="${peerId}"]`
+      );
+      remoteItem.style.display = "block";
+    };
+    const isMeClicked = (peerId) => peer.value.id === peerId;
+    const hasDisplayedRemoteMembers = () => room.members.length - 1 > 0;
+
+    /**
+     *相手の映像を拡大する
+     */
+    const onMaximizeRemoteVideo = async (peerId) => {
+      const defaultRemoteMaximizeVideo = document.getElementById(
+        "remote-maximize-video"
+      );
+      if (defaultRemoteMaximizeVideo) {
+        defaultRemoteMaximizeVideo.remove();
+      }
+
+      const remoteItem = document.querySelector(
+        `[data-remote-item-id="${peerId}"]`
+      );
+      const remoteVideo = document.querySelector(`[data-peer-id="${peerId}"]`);
+      const $body = document.getElementById("body");
+
+      let remotMaximizeVideo = document.createElement("video");
+      remotMaximizeVideo.id = "remote-maximize-video";
+      remotMaximizeVideo.setAttribute("class", "webcam-video");
+      remotMaximizeVideo.setAttribute("data-maximize-id", peerId);
+
+      remotMaximizeVideo.srcObject = remoteVideo.srcObject;
+      remotMaximizeVideo.playsInline = true;
+      $body.insertBefore(remotMaximizeVideo, $body.firstChild);
+      await remotMaximizeVideo.play().catch(console.error);
+      remoteItem.style.display = "none";
+      document.getElementById("maximize-screen-user-name").textContent = peerId;
+
+      if (isMeClicked(peerId)) {
+        return;
+      }
+      hasMember.value = hasDisplayedRemoteMembers();
+    };
+
     onMounted(async () => {
       const auth = getAuth();
       const q = query(collection(db, "room"), where("name", "==", roomId));
@@ -434,6 +555,7 @@ export default defineComponent({
       onMute,
       onVideo,
       onScreenShare,
+      onMaximize,
     };
   },
 });
