@@ -143,7 +143,7 @@ export default defineComponent({
       // face detecting
       $video.srcObject = await navigator.mediaDevices.getUserMedia({
         video: true,
-        audio: true,
+        // audio: true,
       });
       $video.play().then(async () => {
         // Load learned models
@@ -540,13 +540,13 @@ export default defineComponent({
     });
 
     const onMute = async (event) => {
-      console.log(event, "event");
       // 自身ののストリーム
       const $video = document.getElementById("webcam-video");
       $video.srcObject
         .getAudioTracks()
         .forEach((track) => (track.enabled = !event.value));
-
+      const audioTrack = stream.getAudioTracks()[0];
+      audioTrack.enabled = false;
       // 変更後のオーディオの状態
       console.log(
         $video.srcObject.getAudioTracks(),
