@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Loading v-if="isLoading"></Loading>
     <Video
       @click="onJoin"
       :is-join="isJoin"
@@ -37,10 +38,12 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
+import Loading from "@/components/AppLoading";
 export default defineComponent({
   name: "RoomDetailPage",
   components: {
     Video,
+    Loading,
   },
   setup() {
     const remoteVideos = ref();
@@ -97,6 +100,7 @@ export default defineComponent({
      *アバターを描画する
      */
     const initializeVideo = async (avatar) => {
+      isLoading.value = true;
       const avatarDom = document.getElementById("avatar-canvas");
       if (avatarDom) {
         avatarDom.remove();
@@ -201,12 +205,13 @@ export default defineComponent({
             VRMSchema.HumanoidBoneName.Hips
           ).rotation.y = Math.PI;
         },
-        (progress) =>
+        (progress) => {
           console.log(
             "Loading model...",
             100.0 * (progress.loaded / progress.total),
             "%"
-          ),
+          );
+        },
         (error) => console.error(error)
       );
 
@@ -291,6 +296,9 @@ export default defineComponent({
         requestAnimationFrame(render);
       };
       await render();
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 2000);
     };
     const setMiximizeIcon = (peerId, type) => {
       const maximizeIcon = document.createElement("img");
@@ -557,6 +565,10 @@ export default defineComponent({
     const onVideo = (event) => {
       console.log(event, "ビデオ");
     };
+    /**
+     *ローディング
+     */
+    const isLoading = ref(true);
     return {
       peer,
       isJoin,
@@ -569,6 +581,7 @@ export default defineComponent({
       onVideo,
       onScreenShare,
       onMaximize,
+      isLoading,
     };
   },
 });
