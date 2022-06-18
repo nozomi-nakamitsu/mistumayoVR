@@ -6,6 +6,7 @@
   height: calc(100vh - 120px);
   padding: 20px;
   border-radius: 8px;
+  width: 540px;
   > .title {
     font-size: 20px;
   }
@@ -57,5 +58,27 @@
     right: 20px;
     bottom: 5px;
     cursor: pointer;
+  }
+  > .users {
+    margin: 24px 0;
+  }
+  > .users > .user {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+  }
+  > .users > .user > .button {
+    margin-left: auto;
+  }
+  > .users > .user > .image {
+    width: 45px;
+    height: 45px;
+    margin-right: 8px;
+  }
+  > .users > .user > .image > .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
   }
 }
