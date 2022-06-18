@@ -4,6 +4,7 @@
       <div class="bounce1"></div>
       <div class="bounce2"></div>
       <div class="bounce3"></div>
+      <p class="text">Loarding</p>
     </div>
   </div>
 </template>
@@ -27,6 +28,10 @@ export default defineComponent({
 .spinner {
   margin: auto;
 }
+.spinner>.text{
+    color: #e8374a;
+    margin-top: 20px;
+  }
 
 .spinner > div {
   width: 18px;
