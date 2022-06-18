@@ -25,7 +25,12 @@
         <div class="remote-streams" id="js-remote-streams">
           <div class="right" v-if="hasMember"></div>
         </div>
-        <Comment @close="onClose" @submit="onSubmit" v-if="isComment"></Comment>
+        <Comment
+          @close="onClose"
+          @submit="onSubmit"
+          v-if="isComment"
+          :comments="comments"
+        ></Comment>
       </div>
       <VideoFooter
         v-if="isJoin"
@@ -65,6 +70,10 @@ export default defineComponent({
       type: Object,
       required: true,
     },
+    comments: {
+      type: Array,
+      required: true,
+    },
   },
   emits: [
     "click",
@@ -88,16 +97,14 @@ export default defineComponent({
       isSelecting.value = false;
       emit("select-avatar", event);
     };
-    const onClickComment = (event) => {
-      console.log("comment");
+    const onClickComment = () => {
       isComment.value = !isComment.value;
-      // emit("comment", event);
     };
     const onClose = () => {
       isComment.value = false;
     };
     const onSubmit = (inputValue) => {
-      console.log("inputValue", inputValue);
+      emit("comment", inputValue);
     };
     return {
       isSelecting,

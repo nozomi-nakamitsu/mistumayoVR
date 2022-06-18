@@ -41,16 +41,6 @@
           <AppIcon :icon="faPhone" color="white" class="phone"></AppIcon>
         </div>
       </button>
-      <button
-        class="video-button"
-        :class="{ '-isActive': !isScreenSharing }"
-        @click="onClick('screenSharing')"
-      >
-        <div class="icon">
-          <img v-if="isScreenSharing" src="@/assets/images/screen-share.svg" />
-          <img v-else src="@/assets/images/stop-screen-share.svg" />
-        </div>
-      </button>
     </div>
     <div class="container -w20">
       <button

@@ -24,13 +24,17 @@
     margin: 24px 0;
     font-size: 12px;
   }
-  > .comments > .item {
+  > .comments {
+    height: calc(100% - 170px);
+    overflow-y: scroll;
+  }
+  > .comments > .items > .item {
     margin: 16px 0;
   }
-  > .comments > .item > .header {
+  > .comments > .items > .item > .header {
     display: flex;
   }
-  > .comments > .item > .header > .time {
+  > .comments > .items > .item > .header > .time {
     margin-left: 16px;
     color: $gray;
     height: 80%;

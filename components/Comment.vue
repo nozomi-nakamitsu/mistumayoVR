@@ -11,21 +11,16 @@
         通話が終了すると削除されます
       </p>
     </div>
-    <div class="comments">
-      <div class="item">
-        <div class="header">
-          <p>あなた</p>
-          <p class="time">11:22</p>
+    <div class="comments" v-if="comments.length">
+      <div v-for="(comment, index) in comments" :key="index" class="items">
+        <div class="item">
+          <div class="header">
+            <p class="name">{{ comment.name }}</p>
+            <p class="time">{{ comment.createdAt }}</p>
+          </div>
+          <p>{{ comment.message }}</p>
         </div>
-        <p>こんにちは</p>
       </div>
-      <!-- <div class="item">
-        <div class="header">
-          <p>あなた</p>
-          <p class="time">11:22</p>
-        </div>
-        <p>こんにちは</p>
-      </div> -->
     </div>
     <div class="search">
       <input
@@ -44,6 +39,12 @@ import { defineComponent, ref } from "@nuxtjs/composition-api";
 import AppIcon from "@/components/AppIcon.vue";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 export default defineComponent({
+  props: {
+    comments: {
+      type: Array,
+      required: true,
+    },
+  },
   emits: ["close", "submit"],
   components: { AppIcon },
   setup(_, { emit }) {
@@ -52,6 +53,7 @@ export default defineComponent({
       emit("submit", inputValue.value);
       inputValue.value = "";
     };
+
     return { faPaperPlane, inputValue, onSubmit };
   },
 });

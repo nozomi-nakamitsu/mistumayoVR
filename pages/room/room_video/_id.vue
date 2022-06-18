@@ -7,11 +7,13 @@
       :has-member="hasMember"
       :room="roomRef"
       :switch-scree-sharing="switchScreeSharing"
+      :comments="comments"
       @select-avatar="initializeVideo"
       @leave="onLeave"
       @mute="onMute"
       @video="onVideo"
       @screen-sharing="onScreenShare"
+      @comment="onComment"
     ></Video>
   </div>
 </template>
@@ -349,6 +351,18 @@ export default defineComponent({
           leavedPeer.remove();
         }
       });
+      room.on("data", async (message) => {
+        const uid = getUid(message.src);
+        const remoteUser = await getUserByUid(uid);
+        comments.value = [
+          ...comments.value,
+          {
+            name: remoteUser.name,
+            message: message.data,
+            createdAt: dayjs(new Date()).format("HH:mm"),
+          },
+        ];
+      });
     };
     /**
      *リモートのビデオを右側に表示する
@@ -535,14 +549,15 @@ export default defineComponent({
       hasMember.value = hasDisplayedRemoteMembers();
     };
 
+    const auth = ref();
     onMounted(async () => {
-      const auth = await getAuth();
+      auth.value = await getAuth();
       const q = query(collection(db, "room"), where("name", "==", roomId));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         docId.value = doc.id;
       });
-      await setSkyWay(auth.currentUser);
+      await setSkyWay(auth.value.currentUser);
       await initializeVideo(Avatar.avatar1);
     });
 
@@ -594,6 +609,22 @@ export default defineComponent({
      */
     const isLoading = ref(true);
     const switchScreeSharing = ref(false);
+
+    /**
+     *コメントを送信する
+     */
+    const onComment = (inputValue) => {
+      comments.value = [
+        ...comments.value,
+        {
+          name: auth.value.currentUser.displayName,
+          message: inputValue,
+          createdAt: dayjs(new Date()).format("HH:mm"),
+        },
+      ];
+      room.send(inputValue);
+    };
+    const comments = ref([]);
     return {
       peer,
       isJoin,
@@ -608,6 +639,8 @@ export default defineComponent({
       onMaximize,
       isLoading,
       switchScreeSharing,
+      onComment,
+      comments,
     };
   },
 });
