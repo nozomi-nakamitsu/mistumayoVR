@@ -35,6 +35,7 @@ import Loading from "@/components/AppLoading";
 import dayjs from "dayjs";
 import { getUid, getUserByUid } from "@/compositions/useAuth";
 import { db } from "@/plugins/firebase.js";
+import { Avatar } from "@/enums/avatar";
 
 export default defineComponent({
   name: "RoomDetailPage",
@@ -57,7 +58,7 @@ export default defineComponent({
     let room;
     const peer = ref();
     const vrm = ref(null);
-
+    const localAvatar = ref(Avatar.avatar1);
     const setSkyWay = (auth) => {
       const API_KEY = process.env.SKY_WAY_API_KEY;
       const date = dayjs(new Date()).format("YYYYMMDDHHmmss");
@@ -70,9 +71,12 @@ export default defineComponent({
         console.log(`PeerId: ${pid}`);
       });
     };
-    const switchAvator = (type) => {
-      if (type === "A") {
+    const switchAvator = () => {
+      if (localAvatar.value === Avatar.avatar1) {
         return "/resource/sample1.vrm";
+      }
+      if (localAvatar.value === Avatar.avatar2) {
+        return "/resource/sample2.vrm";
       }
       return "/resource/sample2.vrm";
     };
@@ -85,6 +89,7 @@ export default defineComponent({
      */
     const initializeVideo = async (avatar) => {
       isLoading.value = true;
+      localAvatar.value = avatar;
       const avatarDom = document.getElementById("avatar-canvas");
       if (avatarDom) {
         avatarDom.remove();
@@ -181,7 +186,7 @@ export default defineComponent({
 
       // VRM Settings
       loader.load(
-        switchAvator(avatar),
+        switchAvator(),
         async (gltf) => {
           vrm.value = await VRM.from(gltf);
           scene.add(vrm.value.scene);
@@ -426,7 +431,7 @@ export default defineComponent({
       screenShareStream = null;
       $video.style.display = "none";
       $avatarCanvas.style.display = "block";
-      await initializeVideo();
+      await initializeVideo(localAvatar.value);
       room.replaceStream(stream);
     }
     /**
@@ -538,7 +543,7 @@ export default defineComponent({
         docId.value = doc.id;
       });
       await setSkyWay(auth.currentUser);
-      await initializeVideo(auth.currentUser.photoURL);
+      await initializeVideo(Avatar.avatar1);
     });
 
     /**

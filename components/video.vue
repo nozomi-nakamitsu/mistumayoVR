@@ -86,9 +86,9 @@ export default defineComponent({
     const onSelect = () => {
       isSelecting.value = true;
     };
-    const onClickSelect = () => {
+    const onClickSelect = (event) => {
       isSelecting.value = false;
-      emit("select-avatar", "A");
+      emit("select-avatar", event);
     };
     return {
       isSelecting,
