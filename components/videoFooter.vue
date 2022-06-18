@@ -1,50 +1,74 @@
 <template>
   <div class="footer-container">
-    <button
-      class="video-button"
-      :class="{ '-isActive': isMute }"
-      @click="onClick('mute')"
-    >
-      <div>
-        <AppIcon
-          :icon="isMute ? faMicrophoneSlash : faMicrophone"
-          :color="isMute ? 'white' : 'gray'"
-        ></AppIcon>
-      </div>
-    </button>
-    <button
-      class="video-button"
-      :class="[{ '-isActive': !isVideoOn }]"
-      @click="onClick('video')"
-      :disabled="isScreenSharing"
-    >
-      <div>
-        <AppIcon
-          :icon="isVideoOn ? faVideo : faVideoSlash"
-          :color="isVideoOn ? 'gray' : 'white'"
-        ></AppIcon>
-      </div>
-    </button>
-    <button
-      class="video-button"
-      :class="{ '-isActive': !isScreenSharing }"
-      @click="onClick('screenSharing')"
-    >
-      <div class="icon">
-        <img v-if="isScreenSharing" src="@/assets/images/screen-share.svg" />
-        <img v-else src="@/assets/images/stop-screen-share.svg" />
-      </div>
-    </button>
-    <button class="video-button -leave" @click="$emit('leave')">
-      <div>
-        <AppIcon :icon="faPhone" color="white" class="phone"></AppIcon>
-      </div>
-    </button>
+    <div class="container -w80">
+      <button
+        class="video-button"
+        :class="{ '-isActive': isMute }"
+        @click="onClick('mute')"
+      >
+        <div>
+          <AppIcon
+            :icon="isMute ? faMicrophoneSlash : faMicrophone"
+            :color="isMute ? 'white' : 'gray'"
+          ></AppIcon>
+        </div>
+      </button>
+      <button
+        class="video-button"
+        :class="[{ '-isActive': !isVideoOn }]"
+        @click="onClick('video')"
+        :disabled="isScreenSharing"
+      >
+        <div>
+          <AppIcon
+            :icon="isVideoOn ? faVideo : faVideoSlash"
+            :color="isVideoOn ? 'gray' : 'white'"
+          ></AppIcon>
+        </div>
+      </button>
+      <button
+        class="video-button"
+        :class="{ '-isActive': !isScreenSharing }"
+        @click="onClick('screenSharing')"
+      >
+        <div class="icon">
+          <img v-if="isScreenSharing" src="@/assets/images/screen-share.svg" />
+          <img v-else src="@/assets/images/stop-screen-share.svg" />
+        </div>
+      </button>
+      <button class="video-button -leave" @click="$emit('leave')">
+        <div>
+          <AppIcon :icon="faPhone" color="white" class="phone"></AppIcon>
+        </div>
+      </button>
+      <button
+        class="video-button"
+        :class="{ '-isActive': !isScreenSharing }"
+        @click="onClick('screenSharing')"
+      >
+        <div class="icon">
+          <img v-if="isScreenSharing" src="@/assets/images/screen-share.svg" />
+          <img v-else src="@/assets/images/stop-screen-share.svg" />
+        </div>
+      </button>
+    </div>
+    <div class="container -w20">
+      <button
+        class="video-button"
+        :class="{ '-isActive': !isComment }"
+        @click="onClick('comment')"
+      >
+        <div class="icon">
+          <img v-if="isComment" src="@/assets/images/screen-share.svg" />
+          <img v-else src="@/assets/images/stop-screen-share.svg" />
+        </div>
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref,watch } from "@nuxtjs/composition-api";
+import { defineComponent, ref, watch } from "@nuxtjs/composition-api";
 import AppIcon from "@/components/AppIcon.vue";
 import {
   faMicrophone,
@@ -62,7 +86,7 @@ export default defineComponent({
     },
   },
   components: AppIcon,
-  emits: ["leave", "mute", "video", "screen-sharing"],
+  emits: ["leave", "mute", "video", "screen-sharing", "comment"],
   setup(props, { emit }) {
     watch(
       () => props.switchScreeSharing,
@@ -75,7 +99,7 @@ export default defineComponent({
     const isMute = ref(false);
     const isScreenSharing = ref(false);
     const isVideoOn = ref(false);
-
+    const isComment = ref(false);
     const onClick = (type) => {
       if (type === "mute") {
         isMute.value = !isMute.value;
@@ -90,6 +114,10 @@ export default defineComponent({
         isVideoOn.value = !isVideoOn.value;
         emit("video", isVideoOn);
       }
+      if (type === "comment") {
+        isComment.value = !isComment.value;
+        emit("comment", isComment);
+      }
     };
     return {
       faMicrophone,
@@ -103,6 +131,7 @@ export default defineComponent({
       faLaptop,
       faPhone,
       faLaptopSlash,
+      isComment,
     };
   },
 });

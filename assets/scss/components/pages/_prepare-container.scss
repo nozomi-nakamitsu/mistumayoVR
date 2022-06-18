@@ -16,6 +16,9 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      &.-is-comment {
+        align-items: start;
+      }
       &.-no-member {
         width: 100%;
         > .video {
