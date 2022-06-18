@@ -40,6 +40,9 @@ import {
   getDocs,
 } from "firebase/firestore";
 import Loading from "@/components/AppLoading";
+import dayjs from "dayjs";
+import { getUid, getUserByUid } from "@/compositions/useAuth";
+
 export default defineComponent({
   name: "RoomDetailPage",
   components: {
@@ -74,14 +77,13 @@ export default defineComponent({
     const peer = ref();
     const vrm = ref(null);
 
-    const setSkyWay = (auth) => {
+    const setSkyWay = async (auth) => {
       const API_KEY = process.env.SKY_WAY_API_KEY;
-      peer.value = new Peer({
+      const date = dayjs(new Date()).format("YYYYMMDDHHMM");
+      // NOTE: PeerIDは「fireStoreのuid_日付」を指定している
+      const peerId = `${auth.uid}_${date}`;
+      peer.value = new Peer(peerId, {
         key: API_KEY,
-        user: {
-          name: auth.displayName,
-          icon: auth.photoURL,
-        },
       });
       peer.value.on("open", (pid) => {
         console.log(`PeerId: ${pid}`);
@@ -299,7 +301,7 @@ export default defineComponent({
       await render();
       setTimeout(() => {
         isLoading.value = false;
-      }, 2000);
+      }, 3000);
     };
     const setMiximizeIcon = (peerId, type) => {
       const maximizeIcon = document.createElement("img");
@@ -366,11 +368,13 @@ export default defineComponent({
      *リモートのビデオを右側に表示する
      */
     const addRemoteVideo = async (stream) => {
+      const uid = getUid(stream.peerId);
+      const remoteUser = await getUserByUid(uid);
       hasMember.value = !!room.members.length;
       const newDom = document.createElement("div");
       const newVideo = document.createElement("video");
       const userName = document.createElement("p");
-      userName.textContent = stream.peerId;
+      userName.textContent = remoteUser.name;
       newVideo.srcObject = stream;
       newVideo.playsInline = true;
       newDom.setAttribute("class", "remote-item");
@@ -535,8 +539,9 @@ export default defineComponent({
       $body.insertBefore(remotMaximizeVideo, $body.firstChild);
       await remotMaximizeVideo.play().catch(console.error);
       remoteItem.style.display = "none";
-      document.getElementById("maximize-screen-user-name").textContent = peerId;
-
+      const uid = getUid(peerId);
+      const remoteUser = await getUserByUid(uid);
+      document.getElementById("maximize-screen-user-name").textContent = remoteUser.name;
       if (isMeClicked(peerId)) {
         return;
       }
@@ -544,14 +549,15 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      const auth = getAuth();
+      const auth = await getAuth();
       const q = query(collection(db, "room"), where("name", "==", roomId));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         docId.value = doc.id;
       });
-      await initializeVideo(auth.currentUser.photoURL);
+
       await setSkyWay(auth.currentUser);
+      await initializeVideo(auth.currentUser.photoURL);
     });
 
     /**
