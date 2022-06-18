@@ -1,0 +1,61 @@
+.comment-container {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background-color: $white-gray;
+  height: calc(100vh - 120px);
+  padding: 20px;
+  border-radius: 8px;
+  > .title {
+    font-size: 20px;
+  }
+  > .header {
+    display: flex;
+    align-items: center;
+  }
+  > .header > .close {
+    cursor: pointer;
+    margin-left: auto;
+  }
+  > .description {
+    background-color: $white;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 24px 0;
+    font-size: 12px;
+  }
+  > .comments {
+    height: calc(100% - 170px);
+    overflow-y: scroll;
+  }
+  > .comments > .items > .item {
+    margin: 16px 0;
+  }
+  > .comments > .items > .item > .header {
+    display: flex;
+  }
+  > .comments > .items > .item > .header > .time {
+    margin-left: 16px;
+    color: $gray;
+    height: 80%;
+  }
+  > .search {
+    position: absolute;
+    bottom: 20px;
+  }
+  > .search > .input {
+    position: relative;
+    background-color: $white;
+    height: 40px;
+    border-radius: 20px;
+    width: 500px;
+    padding: 12px;
+    // left: 50%;
+  }
+  > .search > .submit {
+    position: absolute;
+    right: 20px;
+    bottom: 5px;
+    cursor: pointer;
+  }
+}

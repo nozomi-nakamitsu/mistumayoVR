@@ -5,4 +5,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  > .container {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &.-w20 {
+      width: 20%;
+    }
+    &.-w80 {
+      width: 80%;
+    }
+  }
 }
