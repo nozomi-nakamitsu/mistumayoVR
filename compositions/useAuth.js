@@ -14,7 +14,6 @@ export const getUid = (peerId) => peerId.substr(0, peerId.indexOf("_"));
 /**
  *ユーザーを取得する
  */
-
 export const getUserByUid = async (uid) => {
   const q = query(collection(db, "users"), where("uid", "==", uid));
   const querySnapshot = await getDocs(q);

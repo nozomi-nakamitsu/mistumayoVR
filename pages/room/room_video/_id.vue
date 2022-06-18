@@ -42,6 +42,7 @@ import {
 import Loading from "@/components/AppLoading";
 import dayjs from "dayjs";
 import { getUid, getUserByUid } from "@/compositions/useAuth";
+import { db } from "@/plugins/firebase.js";
 
 export default defineComponent({
   name: "RoomDetailPage",
@@ -52,18 +53,6 @@ export default defineComponent({
   setup() {
     const remoteVideos = ref();
     const Route = useRoute();
-    const Router = useRouter();
-    const firebaseConfig = {
-      apiKey: process.env.API_KEY,
-      authDomain: process.env.AUTH_DOMAIN,
-      projectId: process.env.PROJECT_ID,
-      storageBucket: process.env.STORAGE_BUCKET,
-      messagingSenderId: process.env.MESSAGING_SENDER_ID,
-      appId: process.env.APP_ID,
-      measurementId: process.env.MEASUREMENT_ID,
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
     const roomId = Route.value.params.id;
     const docId = ref();
     const roomRef = {
@@ -555,7 +544,6 @@ export default defineComponent({
       querySnapshot.forEach((doc) => {
         docId.value = doc.id;
       });
-
       await setSkyWay(auth.currentUser);
       await initializeVideo(auth.currentUser.photoURL);
     });
@@ -571,11 +559,6 @@ export default defineComponent({
         .forEach((track) => (track.enabled = !event.value));
       const audioTrack = stream.getAudioTracks()[0];
       audioTrack.enabled = !event.value;
-      // 変更後のオーディオの状態
-      console.log(
-        $video.srcObject.getAudioTracks(),
-        "$video.srcObject.getAudioTracks()"
-      );
     };
 
     /**
