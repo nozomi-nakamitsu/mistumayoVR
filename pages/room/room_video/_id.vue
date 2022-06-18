@@ -6,6 +6,7 @@
       :is-join="isJoin"
       :has-member="hasMember"
       :room="roomRef"
+      :switch-scree-sharing="switchScreeSharing"
       @select-avatar="initializeVideo"
       @leave="onLeave"
       @mute="onMute"
@@ -412,9 +413,15 @@ export default defineComponent({
     async function onClickStartScreenShare() {
       const $video = document.getElementById("webcam-video");
       const $avatarCanvas = document.getElementById("avatar-canvas");
-      screenShareStream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
-      });
+      switchScreeSharing.value = false;
+      try {
+        screenShareStream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+        });
+      } catch (error) {
+        switchScreeSharing.value = true;
+        return;
+      }
       $video.srcObject = screenShareStream;
       $video.style.display = "block";
       $avatarCanvas.style.display = "none";
@@ -599,6 +606,7 @@ export default defineComponent({
      *ローディング
      */
     const isLoading = ref(true);
+    const switchScreeSharing = ref(false);
     return {
       peer,
       isJoin,
@@ -612,6 +620,7 @@ export default defineComponent({
       onScreenShare,
       onMaximize,
       isLoading,
+      switchScreeSharing,
     };
   },
 });

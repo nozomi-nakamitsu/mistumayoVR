@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "@nuxtjs/composition-api";
+import { defineComponent, ref,watch } from "@nuxtjs/composition-api";
 import AppIcon from "@/components/AppIcon.vue";
 import {
   faMicrophone,
@@ -56,10 +56,22 @@ import {
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
 export default defineComponent({
-  props: {},
+  props: {
+    switchScreeSharing: {
+      type: Boolean,
+    },
+  },
   components: AppIcon,
   emits: ["leave", "mute", "video", "screen-sharing"],
-  setup(_, { emit }) {
+  setup(props, { emit }) {
+    watch(
+      () => props.switchScreeSharing,
+      () => {
+        if (props.switchScreeSharing) {
+          isScreenSharing.value = !isScreenSharing.value;
+        }
+      }
+    );
     const isMute = ref(false);
     const isScreenSharing = ref(false);
     const isVideoOn = ref(false);
