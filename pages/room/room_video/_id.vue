@@ -60,7 +60,7 @@ export default defineComponent({
 
     const setSkyWay = (auth) => {
       const API_KEY = process.env.SKY_WAY_API_KEY;
-      const date = dayjs(new Date()).format("YYYYMMDDHHMM");
+      const date = dayjs(new Date()).format("YYYYMMDDHHmmss");
       // NOTE: PeerIDは「fireStoreのuid_日付」を指定している
       const peerId = `${auth.uid}_${date}`;
       peer.value = new Peer(peerId, {
