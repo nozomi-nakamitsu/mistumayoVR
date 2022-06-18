@@ -14,8 +14,9 @@
     </button>
     <button
       class="video-button"
-      :class="{ '-isActive': !isVideoOn }"
+      :class="[{ '-isActive': !isVideoOn }]"
       @click="onClick('video')"
+      :disabled="isScreenSharing"
     >
       <div>
         <AppIcon
@@ -70,6 +71,7 @@ export default defineComponent({
       }
       if (type === "screenSharing") {
         isScreenSharing.value = !isScreenSharing.value;
+        isVideoOn.value = false;
         emit("screen-sharing", isScreenSharing);
       }
       if (type === "video") {

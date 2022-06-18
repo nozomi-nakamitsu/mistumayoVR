@@ -27,4 +27,8 @@
     object-fit: cover;
     height: 100%;
   }
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
 }

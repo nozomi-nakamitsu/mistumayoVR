@@ -547,6 +547,9 @@ export default defineComponent({
       await setSkyWay(auth.currentUser);
     });
 
+    /**
+     *ミュートボタン押下時に発火
+     */
     const onMute = async (event) => {
       // 自身ののストリーム
       const $video = document.getElementById("webcam-video");
@@ -562,8 +565,35 @@ export default defineComponent({
       );
     };
 
-    const onVideo = (event) => {
-      console.log(event, "ビデオ");
+    /**
+     *ビデオボタン押下時に発火
+     */
+    const onVideo = (toVideoOn) => {
+      if (toVideoOn.value) {
+        onVideoChat();
+        return;
+      }
+      onRemoveVideoChat();
+    };
+    /**
+     *ビデオを表示する
+     */
+    const onVideoChat = () => {
+      const $avatarCanvas = document.getElementById("avatar-canvas");
+      $avatarCanvas.style.display = "none";
+      const $video = document.getElementById("webcam-video");
+      $video.style.display = "block";
+      room.replaceStream($video.srcObject);
+    };
+    /**
+     *ビデオを非表示にする
+     */
+    const onRemoveVideoChat = () => {
+      const $avatarCanvas = document.getElementById("avatar-canvas");
+      $avatarCanvas.style.display = "block";
+      const $video = document.getElementById("webcam-video");
+      $video.style.display = "none";
+      room.replaceStream(stream);
     };
     /**
      *ローディング
