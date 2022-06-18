@@ -14,27 +14,24 @@
     </button>
     <button
       class="video-button"
-      :class="{ '-isActive': isVideoOn }"
+      :class="{ '-isActive': !isVideoOn }"
       @click="onClick('video')"
     >
       <div>
         <AppIcon
-          :icon="isVideoOn ? faVideoSlash : faVideo"
-          :color="isVideoOn ? 'white' : 'gray'"
+          :icon="isVideoOn ? faVideo : faVideoSlash"
+          :color="isVideoOn ? 'gray' : 'white'"
         ></AppIcon>
       </div>
     </button>
     <button
       class="video-button"
-      :class="{ '-isActive': isScreenSharing }"
+      :class="{ '-isActive': !isScreenSharing }"
       @click="onClick('screenSharing')"
     >
-      <div>
-        <!-- TODO: 後でアイコンパスを修正する -->
-        <AppIcon
-          :icon="faLaptop"
-          :color="isScreenSharing ? 'white' : 'gray'"
-        ></AppIcon>
+      <div class="icon">
+        <img v-if="isScreenSharing" src="@/assets/images/screen-share.svg" />
+        <img v-else src="@/assets/images/stop-screen-share.svg" />
       </div>
     </button>
     <button class="video-button -leave" @click="$emit('leave')">

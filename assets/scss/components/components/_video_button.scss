@@ -17,4 +17,14 @@
   &.phone {
     transform: rotate(45deg);
   }
+  > .icon {
+    width: 25px;
+    margin: 0 auto;
+    height: 25px;
+  }
+  > .icon > .img {
+    width: 100%;
+    object-fit: cover;
+    height: 100%;
+  }
 }
