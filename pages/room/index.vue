@@ -9,7 +9,7 @@
         Create Room
       </div>
       <div class="list" v-for="(room, key) in rooms" :key="key">
-        <div class="name" @click="$router.push(`room_video/${room.name}`)">
+        <div class="name" @click="$router.push(`room/room_video/${room.name}`)">
           {{ room.name }}
         </div>
         <div class="date">
