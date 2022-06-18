@@ -14,8 +14,9 @@
     </button>
     <button
       class="video-button"
-      :class="{ '-isActive': !isVideoOn }"
+      :class="[{ '-isActive': !isVideoOn }]"
       @click="onClick('video')"
+      :disabled="isScreenSharing"
     >
       <div>
         <AppIcon
@@ -43,7 +44,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "@nuxtjs/composition-api";
+import { defineComponent, ref,watch } from "@nuxtjs/composition-api";
 import AppIcon from "@/components/AppIcon.vue";
 import {
   faMicrophone,
@@ -55,10 +56,22 @@ import {
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
 export default defineComponent({
-  props: {},
+  props: {
+    switchScreeSharing: {
+      type: Boolean,
+    },
+  },
   components: AppIcon,
   emits: ["leave", "mute", "video", "screen-sharing"],
-  setup(_, { emit }) {
+  setup(props, { emit }) {
+    watch(
+      () => props.switchScreeSharing,
+      () => {
+        if (props.switchScreeSharing) {
+          isScreenSharing.value = !isScreenSharing.value;
+        }
+      }
+    );
     const isMute = ref(false);
     const isScreenSharing = ref(false);
     const isVideoOn = ref(false);
@@ -70,6 +83,7 @@ export default defineComponent({
       }
       if (type === "screenSharing") {
         isScreenSharing.value = !isScreenSharing.value;
+        isVideoOn.value = false;
         emit("screen-sharing", isScreenSharing);
       }
       if (type === "video") {

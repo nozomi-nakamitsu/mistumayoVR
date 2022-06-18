@@ -6,6 +6,7 @@
       :is-join="isJoin"
       :has-member="hasMember"
       :room="roomRef"
+      :switch-scree-sharing="switchScreeSharing"
       @select-avatar="initializeVideo"
       @leave="onLeave"
       @mute="onMute"
@@ -412,9 +413,15 @@ export default defineComponent({
     async function onClickStartScreenShare() {
       const $video = document.getElementById("webcam-video");
       const $avatarCanvas = document.getElementById("avatar-canvas");
-      screenShareStream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
-      });
+      switchScreeSharing.value = false;
+      try {
+        screenShareStream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+        });
+      } catch (error) {
+        switchScreeSharing.value = true;
+        return;
+      }
       $video.srcObject = screenShareStream;
       $video.style.display = "block";
       $avatarCanvas.style.display = "none";
@@ -547,6 +554,9 @@ export default defineComponent({
       await setSkyWay(auth.currentUser);
     });
 
+    /**
+     *ミュートボタン押下時に発火
+     */
     const onMute = async (event) => {
       // 自身ののストリーム
       const $video = document.getElementById("webcam-video");
@@ -562,13 +572,41 @@ export default defineComponent({
       );
     };
 
-    const onVideo = (event) => {
-      console.log(event, "ビデオ");
+    /**
+     *ビデオボタン押下時に発火
+     */
+    const onVideo = (toVideoOn) => {
+      if (toVideoOn.value) {
+        onVideoChat();
+        return;
+      }
+      onRemoveVideoChat();
+    };
+    /**
+     *ビデオを表示する
+     */
+    const onVideoChat = () => {
+      const $avatarCanvas = document.getElementById("avatar-canvas");
+      $avatarCanvas.style.display = "none";
+      const $video = document.getElementById("webcam-video");
+      $video.style.display = "block";
+      room.replaceStream($video.srcObject);
+    };
+    /**
+     *ビデオを非表示にする
+     */
+    const onRemoveVideoChat = () => {
+      const $avatarCanvas = document.getElementById("avatar-canvas");
+      $avatarCanvas.style.display = "block";
+      const $video = document.getElementById("webcam-video");
+      $video.style.display = "none";
+      room.replaceStream(stream);
     };
     /**
      *ローディング
      */
     const isLoading = ref(true);
+    const switchScreeSharing = ref(false);
     return {
       peer,
       isJoin,
@@ -582,6 +620,7 @@ export default defineComponent({
       onScreenShare,
       onMaximize,
       isLoading,
+      switchScreeSharing,
     };
   },
 });

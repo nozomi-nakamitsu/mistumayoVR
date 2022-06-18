@@ -40,6 +40,7 @@
     </div>
     <VideoFooter
       v-if="isJoin"
+      :switch-scree-sharing="switchScreeSharing"
       @leave="$emit('leave')"
       @mute="$emit('mute', $event)"
       @video="$emit('video', $event)"
@@ -62,6 +63,9 @@ export default defineComponent({
     hasMember: {
       type: Boolean,
       required: true,
+    },
+    switchScreeSharing: {
+      type: Boolean,
     },
     room: {
       type: Object,
