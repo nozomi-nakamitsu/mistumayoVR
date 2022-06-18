@@ -48,10 +48,15 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "@nuxtjs/composition-api";
+import {
+  defineComponent,
+  ref,
+  watch,
+} from "@nuxtjs/composition-api";
 import VideoFooter from "@/components/videoFooter";
 import AvatarSelect from "@/components/AvatarSelect";
 import Comment from "@/components/Comment";
+import { createText } from "@/compositions/useTextAnimation";
 
 export default defineComponent({
   props: {
@@ -85,7 +90,7 @@ export default defineComponent({
     "comment",
   ],
   components: [VideoFooter, AvatarSelect],
-  setup(_, { emit }) {
+  setup(props, { emit }) {
     isSelecting;
     const isSelecting = ref(false);
     const isComment = ref(false);
@@ -106,6 +111,15 @@ export default defineComponent({
     const onSubmit = (inputValue) => {
       emit("comment", inputValue);
     };
+    watch(
+      () => props.comments,
+      async () => {
+        const lastIndex = props.comments.length - 1;
+        await createText(props.comments[lastIndex]);
+        return;
+      }
+    );
+
     return {
       isSelecting,
       onSelect,
