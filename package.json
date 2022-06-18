@@ -19,6 +19,7 @@
     "face-api.js": "^0.22.2",
     "firebase": "^9.8.2",
     "firebaseui": "^6.0.1",
+    "gsap": "^3.10.4",
     "nuxt": "^2.15.8",
     "nuxt-fontawesome": "^0.4.0",
     "skyway-js": "^4.4.4",
