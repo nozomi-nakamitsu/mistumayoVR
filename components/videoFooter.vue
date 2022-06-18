@@ -45,12 +45,10 @@
     <div class="container -w20">
       <button
         class="video-button"
-        :class="{ '-isActive': !isComment }"
         @click="onClick('comment')"
       >
-        <div class="icon">
-          <img v-if="isComment" src="@/assets/images/screen-share.svg" />
-          <img v-else src="@/assets/images/stop-screen-share.svg" />
+        <div>
+          <AppIcon :icon="faMessage" color="gray"></AppIcon>
         </div>
       </button>
     </div>
@@ -68,6 +66,7 @@ import {
   faLaptop,
   faLaptopSlash,
   faPhone,
+  faMessage,
 } from "@fortawesome/free-solid-svg-icons";
 export default defineComponent({
   props: {
@@ -122,6 +121,7 @@ export default defineComponent({
       faPhone,
       faLaptopSlash,
       isComment,
+      faMessage,
     };
   },
 });
