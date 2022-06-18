@@ -22,7 +22,6 @@ import {
   onMounted,
   ref,
   useRoute,
-  useRouter,
 } from "@nuxtjs/composition-api";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -31,14 +30,7 @@ import * as faceapi from "face-api.js";
 import Peer from "skyway-js";
 import Video from "@/components/video.vue";
 import { getAuth } from "firebase/auth";
-import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-} from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import Loading from "@/components/AppLoading";
 import dayjs from "dayjs";
 import { getUid, getUserByUid } from "@/compositions/useAuth";
@@ -66,7 +58,7 @@ export default defineComponent({
     const peer = ref();
     const vrm = ref(null);
 
-    const setSkyWay = async (auth) => {
+    const setSkyWay = (auth) => {
       const API_KEY = process.env.SKY_WAY_API_KEY;
       const date = dayjs(new Date()).format("YYYYMMDDHHMM");
       // NOTE: PeerIDは「fireStoreのuid_日付」を指定している
@@ -530,7 +522,8 @@ export default defineComponent({
       remoteItem.style.display = "none";
       const uid = getUid(peerId);
       const remoteUser = await getUserByUid(uid);
-      document.getElementById("maximize-screen-user-name").textContent = remoteUser.name;
+      document.getElementById("maximize-screen-user-name").textContent =
+        remoteUser.name;
       if (isMeClicked(peerId)) {
         return;
       }
