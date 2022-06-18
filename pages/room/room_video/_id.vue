@@ -554,7 +554,7 @@ export default defineComponent({
         .getAudioTracks()
         .forEach((track) => (track.enabled = !event.value));
       const audioTrack = stream.getAudioTracks()[0];
-      audioTrack.enabled = false;
+      audioTrack.enabled = !event.value;
       // 変更後のオーディオの状態
       console.log(
         $video.srcObject.getAudioTracks(),
