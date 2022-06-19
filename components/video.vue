@@ -5,7 +5,10 @@
         <div
           class="left"
           id="body"
-          :class="[{ '-no-member': !hasMember }, { '-is-comment': isComment }]"
+          :class="[
+            { '-no-member': !hasMember },
+            { '-is-comment': isComment || isUsers },
+          ]"
         >
           <video class="video" id="webcam-video" style="display: none"></video>
           <canvas id="landmarks" style="display: none"></canvas>
@@ -31,6 +34,7 @@
           v-if="isComment"
           :comments="comments"
         ></Comment>
+        <UsersList @close="onClose" v-if="isUsers" :users="users"></UsersList>
       </div>
       <VideoFooter
         v-if="isJoin"
@@ -40,6 +44,7 @@
         @video="$emit('video', $event)"
         @screen-sharing="$emit('screen-sharing', $event)"
         @comment="onClickComment"
+        @users="onClickUsers"
       >
       </VideoFooter>
     </div>
@@ -48,14 +53,12 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  ref,
-  watch,
-} from "@nuxtjs/composition-api";
+import { defineComponent, ref, watch } from "@nuxtjs/composition-api";
 import VideoFooter from "@/components/videoFooter";
 import AvatarSelect from "@/components/AvatarSelect";
 import Comment from "@/components/Comment";
+import UsersList from "@/components/UsersList";
+
 import { createText } from "@/compositions/useTextAnimation";
 
 export default defineComponent({
@@ -79,6 +82,10 @@ export default defineComponent({
       type: Array,
       required: true,
     },
+    users: {
+      type: Array,
+      required: true,
+    },
   },
   emits: [
     "click",
@@ -94,6 +101,7 @@ export default defineComponent({
     isSelecting;
     const isSelecting = ref(false);
     const isComment = ref(false);
+    const isUsers = ref(false);
 
     const onSelect = () => {
       isSelecting.value = true;
@@ -104,12 +112,18 @@ export default defineComponent({
     };
     const onClickComment = () => {
       isComment.value = !isComment.value;
+      isUsers.value = false;
     };
     const onClose = () => {
       isComment.value = false;
+      isUsers.value = false;
     };
     const onSubmit = (inputValue) => {
       emit("comment", inputValue);
+    };
+    const onClickUsers = () => {
+      isUsers.value = !isUsers.value;
+      isComment.value = false;
     };
     watch(
       () => props.comments,
@@ -127,7 +141,9 @@ export default defineComponent({
       onClickComment,
       isComment,
       onClose,
+      onClickUsers,
       onSubmit,
+      isUsers,
     };
   },
 });

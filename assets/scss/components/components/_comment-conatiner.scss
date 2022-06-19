@@ -6,6 +6,7 @@
   height: calc(100vh - 120px);
   padding: 20px;
   border-radius: 8px;
+  width: 540px;
   > .title {
     font-size: 20px;
   }
@@ -50,12 +51,35 @@
     border-radius: 20px;
     width: 500px;
     padding: 12px;
-    // left: 50%;
   }
   > .search > .submit {
     position: absolute;
     right: 20px;
     bottom: 5px;
     cursor: pointer;
+  }
+  > .users {
+    margin: 24px 0;
+    height: calc(100% - 40px);
+    overflow-y: scroll;
+  }
+  > .users > .items > .user {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+  }
+  > .users > .items > .user > .button {
+    margin-left: auto;
+  }
+  > .users > .items > .user > .image {
+    width: 45px;
+    height: 45px;
+    margin-right: 12px;
+  }
+  > .users > .items > .user > .image > .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
   }
 }

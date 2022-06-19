@@ -43,10 +43,12 @@
       </button>
     </div>
     <div class="container -w20">
-      <button
-        class="video-button"
-        @click="onClick('comment')"
-      >
+      <button class="video-button" @click="onClick('users')">
+        <div>
+          <AppIcon :icon="faUsers" color="gray"></AppIcon>
+        </div>
+      </button>
+      <button class="video-button" @click="onClick('comment')">
         <div>
           <AppIcon :icon="faMessage" color="gray"></AppIcon>
         </div>
@@ -67,6 +69,7 @@ import {
   faLaptopSlash,
   faPhone,
   faMessage,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 export default defineComponent({
   props: {
@@ -89,6 +92,8 @@ export default defineComponent({
     const isScreenSharing = ref(false);
     const isVideoOn = ref(false);
     const isComment = ref(false);
+    const isUsers = ref(false);
+
     const onClick = (type) => {
       if (type === "mute") {
         isMute.value = !isMute.value;
@@ -107,6 +112,10 @@ export default defineComponent({
         isComment.value = !isComment.value;
         emit("comment", isComment);
       }
+      if (type === "users") {
+        isUsers.value = !isUsers.value;
+        emit("users", isUsers);
+      }
     };
     return {
       faMicrophone,
@@ -122,6 +131,7 @@ export default defineComponent({
       faLaptopSlash,
       isComment,
       faMessage,
+      faUsers,
     };
   },
 });
