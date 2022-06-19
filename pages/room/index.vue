@@ -64,6 +64,7 @@ export default defineComponent({
 
     const copyUrl = async (roomName) => {
       roomPath.value = createRoomPath(roomName);
+      console.log(roomPath.value, "ルームパス");
       await navigator.clipboard.writeText(roomPath.value);
       isAlertVisible.value = true;
     };
