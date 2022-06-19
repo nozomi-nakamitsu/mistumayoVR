@@ -94,12 +94,24 @@ export default defineComponent({
     };
     const switchAvator = () => {
       if (localAvatar.value === Avatar.avatar1) {
-        return "/resource/sample1.vrm";
+        return "/resource/taimei1.vrm";
       }
       if (localAvatar.value === Avatar.avatar2) {
-        return "/resource/sample2.vrm";
+        return "/resource/hoshino1.vrm";
       }
-      return "/resource/sample2.vrm";
+      if (localAvatar.value === Avatar.avatar3) {
+        return "/resource/kishigami1.vrm";
+      }
+      if (localAvatar.value === Avatar.avatar4) {
+        return "/resource/taimei2.vrm";
+      }
+      if (localAvatar.value === Avatar.avatar5) {
+        return "/resource/hoshino2.vrm";
+      }
+      if (localAvatar.value === Avatar.avatar6) {
+        return "/resource/kishigami2.vrm";
+      }
+      return "/resource/hoshino1.vrm";
     };
     // 画面共有の設定
     let screenShareStream;
@@ -515,15 +527,22 @@ export default defineComponent({
       const $video = document.getElementById("webcam-video");
       const $avatarCanvas = document.getElementById("avatar-canvas");
       switchScreeSharing.value = false;
+      let noAudioStream = null;
       try {
         screenShareStream = await navigator.mediaDevices.getDisplayMedia({
           video: true,
         });
+        const audioStream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        const audioTrack = audioStream.getAudioTracks()[0];
+        noAudioStream = screenShareStream;
+        screenShareStream.addTrack(audioTrack);
       } catch (error) {
         switchScreeSharing.value = true;
         return;
       }
-      $video.srcObject = screenShareStream;
+      $video.srcObject = noAudioStream;
       $video.style.display = "block";
       $avatarCanvas.style.display = "none";
       await $video.play().catch(console.error);
@@ -682,12 +701,21 @@ export default defineComponent({
     /**
      *ビデオを表示する
      */
-    const onVideoChat = () => {
+    const onVideoChat = async () => {
       const $avatarCanvas = document.getElementById("avatar-canvas");
       $avatarCanvas.style.display = "none";
       const $video = document.getElementById("webcam-video");
       $video.style.display = "block";
-      room.replaceStream($video.srcObject);
+      $video.srcObject.getTracks().forEach((track) => {
+        track.stop();
+      });
+      const audioStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
+      $video.srcObject = audioStream;
+      await $video.play().catch(console.error);
+      room.replaceStream(audioStream);
     };
     /**
      *ビデオを非表示にする
