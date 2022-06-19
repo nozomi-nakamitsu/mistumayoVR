@@ -60,6 +60,8 @@
   }
   > .users {
     margin: 24px 0;
+    height: calc(100% - 40px);
+    overflow-y: scroll;
   }
   > .users > .items > .user {
     display: flex;
@@ -69,7 +71,7 @@
   > .users > .items > .user > .button {
     margin-left: auto;
   }
-  > .users >.items >  .user > .image {
+  > .users > .items > .user > .image {
     width: 45px;
     height: 45px;
     margin-right: 12px;
