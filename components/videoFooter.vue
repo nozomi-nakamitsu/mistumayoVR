@@ -13,7 +13,7 @@
           ></AppIcon>
         </div>
       </button>
-      <button
+      <!-- <button
         class="video-button"
         :class="[{ '-isActive': !isVideoOn }]"
         @click="onClick('video')"
@@ -25,7 +25,7 @@
             :color="isVideoOn ? 'gray' : 'white'"
           ></AppIcon>
         </div>
-      </button>
+      </button> -->
       <button
         class="video-button"
         :class="{ '-isActive': !isScreenSharing }"
