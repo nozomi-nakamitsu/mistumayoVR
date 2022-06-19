@@ -1,5 +1,5 @@
 export const APP_ROUTES = {
-  login: { path: "/login", name: "ログイン" },
+  index: { path: "/", name: "ログイン" },
 };
 
 const roomPrefix = "/room";
