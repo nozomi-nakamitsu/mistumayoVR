@@ -1,15 +1,21 @@
 <template>
   <div v-if="rooms" class="list-room-container">
     <v-alert v-if="isAlertVisible" color="green" type="success"
-      >URLをコピーしました</v-alert
+      >コピー完了! 次のステップはSlackで誰かにリンクを送ること😉</v-alert
     >
     <div class="room">
       <div class="title">ROOM</div>
-      <div class="list font create" @click="$router.push('/room/create')">
+      <div
+        class="list font create"
+        @click="$router.push(ROOM_ROUTES.create.path)"
+      >
         Roomをつくる
       </div>
       <div class="list" v-for="(room, key) in rooms" :key="key">
-        <div class="name" @click="$router.push(`room/room_video/${room.name}`)">
+        <div
+          class="name"
+          @click="$router.push(`${ROOM_ROUTES.roomVideo.path}/${room.name}`)"
+        >
           {{ room.name }}
         </div>
         <div class="date">
@@ -36,6 +42,7 @@ import {
 import dayjs from "dayjs";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "@/plugins/firebase.js";
+import { ROOM_ROUTES } from "@/config/routes.ts";
 
 export default defineComponent({
   name: "ListRoomPage",
@@ -57,15 +64,15 @@ export default defineComponent({
 
     const copyUrl = async (roomName) => {
       roomPath.value = createRoomPath(roomName);
+      console.log(roomPath.value, "ルームパス");
       await navigator.clipboard.writeText(roomPath.value);
       isAlertVisible.value = true;
     };
 
     const createRoomPath = (roomName) => {
-      // TODO 本当はroutes.tsで定数管理したパスを使いたいのにファイルが呼び出せないのでべた書きしてる
       return process.env.NODE_ENV === "development"
-        ? `${process.env.LOCAL_URL}/room/room_video/${roomName}`
-        : `${process.env.APP_URL}/room/room_video/${roomName}`;
+        ? `${process.env.LOCAL_URL}${ROOM_ROUTES.roomVideo.path}/${roomName}`
+        : `${process.env.APP_URL}${ROOM_ROUTES.roomVideo.path}/${roomName}`;
     };
 
     // NOTE: アラート非表示のタイミング;
@@ -73,7 +80,7 @@ export default defineComponent({
       if (isAlertVisible.value) {
         setTimeout(() => {
           isAlertVisible.value = false;
-        }, 5000);
+        }, 7000);
       }
     });
 
@@ -83,6 +90,7 @@ export default defineComponent({
       isAlertVisible,
       dialog,
       dayjs,
+      ROOM_ROUTES,
     };
   },
 });
