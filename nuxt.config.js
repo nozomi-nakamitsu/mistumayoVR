@@ -35,6 +35,13 @@ export default {
 
   router: {
     middleware: "auth",
+    extendRoutes(routes, resolve) {
+      routes.push({
+        name: "404error",
+        path: "*",
+        component: resolve("~/pages/404.vue"),
+      });
+    },
   },
 
   // Modules: https://go.nuxtjs.dev/config-modules

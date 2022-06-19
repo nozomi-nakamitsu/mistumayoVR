@@ -6,7 +6,7 @@
     <div class="room">
       <div class="title">ROOM</div>
       <div class="list font create" @click="$router.push('/room/create')">
-        Create Room
+        Roomをつくる
       </div>
       <div class="list" v-for="(room, key) in rooms" :key="key">
         <div class="name" @click="$router.push(`room/room_video/${room.name}`)">
@@ -68,7 +68,7 @@ export default defineComponent({
         : `${process.env.APP_URL}/room/room_video/${roomName}`;
     };
 
-    // NOTE: アラート非表示のタイミング
+    // NOTE: アラート非表示のタイミング;
     watchEffect(() => {
       if (isAlertVisible.value) {
         setTimeout(() => {
@@ -159,5 +159,12 @@ export default defineComponent({
       transition: all 0.1s ease 0s;
     }
   }
+}
+
+.theme--dark.v-sheet {
+  background: rgba(0, 128, 0, 0.5);
+  border-color: #1e1e1e;
+  color: #ffffff;
+  border-radius: 4px !important;
 }
 </style>

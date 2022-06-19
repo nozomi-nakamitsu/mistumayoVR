@@ -1,16 +1,17 @@
 <template>
   <div class="create-room-container">
-    <h1>CREATE ROOM</h1>
+    <h1>Room作成</h1>
     <form class="form" @submit.prevent="createRoom">
       <label class="section">
-        <span class="title">Room name</span>
+        <span class="title">タイトル</span>
         <input type="text" v-model="name" class="text" required />
       </label>
+      <span>開始時間</span>
       <label class="date">
         <input type="datetime-local" v-model="date" required />
       </label>
       <div class="footer">
-        <button type="submit" class="button">Continue</button>
+        <button type="submit" class="button">続ける</button>
       </div>
     </form>
   </div>
