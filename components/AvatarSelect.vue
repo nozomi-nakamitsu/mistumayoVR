@@ -10,7 +10,7 @@
         </div>
         <div class="circle">
           <div class="image">
-            <img class="img" src="@/assets/images/avatars/hoshino.png" />
+            <img class="img" src="@/assets/images/avatars/taimei1.png" />
           </div>
         </div>
       </div>
@@ -34,7 +34,7 @@
         </div>
         <div class="circle">
           <div class="image">
-            <img class="img" src="@/assets/images/avatars/hoshino.png" />
+            <img class="img" src="@/assets/images/avatars/kishigami1.png" />
           </div>
         </div>
       </div>
@@ -46,7 +46,7 @@
         </div>
         <div class="circle">
           <div class="image">
-            <img class="img" src="@/assets/images/avatars/hoshino.png" />
+            <img class="img" src="@/assets/images/avatars/taimei2.png" />
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@
         </div>
         <div class="circle">
           <div class="image">
-            <img class="img" src="@/assets/images/avatars/hoshino.png" />
+            <img class="img" src="@/assets/images/avatars/hoshino2.png" />
           </div>
         </div>
       </div>
@@ -70,7 +70,7 @@
         </div>
         <div class="circle">
           <div class="image">
-            <img class="img" src="@/assets/images/avatars/hoshino.png" />
+            <img class="img" src="@/assets/images/avatars/kishigami2.png" />
           </div>
         </div>
       </div>
