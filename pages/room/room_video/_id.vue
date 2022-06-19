@@ -8,6 +8,7 @@
       :room="roomRef"
       :switch-scree-sharing="switchScreeSharing"
       :comments="comments"
+      :users="users"
       @select-avatar="initializeVideo"
       @leave="onLeave"
       @mute="onMute"
@@ -61,17 +62,27 @@ export default defineComponent({
     const peer = ref();
     const vrm = ref(null);
     const localAvatar = ref(Avatar.avatar1);
-    const setSkyWay = (auth) => {
+    const users = ref([]);
+    const auth = ref();
+    const setSkyWay = () => {
       const API_KEY = process.env.SKY_WAY_API_KEY;
       const date = dayjs(new Date()).format("YYYYMMDDHHmmss");
       // NOTE: PeerIDは「fireStoreのuid_日付」を指定している
-      const peerId = `${auth.uid}_${date}`;
+      const peerId = `${auth.value.currentUser.uid}_${date}`;
       peer.value = new Peer(peerId, {
         key: API_KEY,
       });
       peer.value.on("open", (pid) => {
         console.log(`PeerId: ${pid}`);
       });
+      users.value = [
+        ...users.value,
+        {
+          name: auth.value.currentUser.displayName,
+          icon: auth.value.currentUser.photoURL,
+          uid: auth.value.currentUser.uid,
+        },
+      ];
     };
     const switchAvator = () => {
       if (localAvatar.value === Avatar.avatar1) {
@@ -331,7 +342,10 @@ export default defineComponent({
         hasMember.value = !!room.members.length;
       });
       room.on("stream", async (stream) => {
-        addRemoteVideo(stream);
+        const remoteUser = await fetchUserByPeerId(stream.peerId);
+        addRemoteVideo(stream, remoteUser);
+        console.log(remoteUser);
+        users.value = [...users.value, remoteUser];
       });
       room.on("close", async () => {
         hasMember.value = !!room.members.length;
@@ -350,6 +364,7 @@ export default defineComponent({
         if (leavedPeer) {
           leavedPeer.remove();
         }
+        removeUserList(peerId);
       });
       room.on("data", async (message) => {
         const uid = getUid(message.src);
@@ -365,11 +380,26 @@ export default defineComponent({
       });
     };
     /**
+     *peerIdからユーザー情報を取得する
+     */
+    const fetchUserByPeerId = async (peerId) => {
+      const uid = getUid(peerId);
+      const remoteUser = await getUserByUid(uid);
+      return remoteUser;
+    };
+    /**
+     *ユーザー一覧からユーザーを取り除く
+     */
+    const removeUserList = async (peerId) => {
+      const uid = getUid(peerId);
+      users.value = users.value.filter((user) => {
+        user.uid !== uid;
+      });
+    };
+    /**
      *リモートのビデオを右側に表示する
      */
-    const addRemoteVideo = async (stream) => {
-      const uid = getUid(stream.peerId);
-      const remoteUser = await getUserByUid(uid);
+    const addRemoteVideo = async (stream, remoteUser) => {
       hasMember.value = !!room.members.length;
       const newDom = document.createElement("div");
       const newVideo = document.createElement("video");
@@ -549,7 +579,6 @@ export default defineComponent({
       hasMember.value = hasDisplayedRemoteMembers();
     };
 
-    const auth = ref();
     onMounted(async () => {
       auth.value = await getAuth();
       const q = query(collection(db, "room"), where("name", "==", roomId));
@@ -557,7 +586,7 @@ export default defineComponent({
       querySnapshot.forEach((doc) => {
         docId.value = doc.id;
       });
-      await setSkyWay(auth.value.currentUser);
+      await setSkyWay();
       await initializeVideo(Avatar.avatar1);
     });
 
@@ -625,6 +654,7 @@ export default defineComponent({
       room.send(inputValue);
     };
     const comments = ref([]);
+
     return {
       peer,
       isJoin,
@@ -641,6 +671,7 @@ export default defineComponent({
       switchScreeSharing,
       onComment,
       comments,
+      users,
     };
   },
 });

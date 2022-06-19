@@ -4,34 +4,19 @@
       <p class="title">ユーザー</p>
       <div class="close" @click="$emit('close')">X</div>
     </div>
-    <div class="users">
-      <div class="user">
-        <div　class="image">
-          <img
-            src="https://growthseed.jp/wp-content/uploads/2016/12/peach-1.jpg"
-            class="img"
-          />
-        </div>
-        <p>中満のぞみ</p>
-        <button class="video-button -isActive button">
-          <div>
-            <AppIcon :icon="faMicrophoneSlash" color="white"></AppIcon>
-          </div>
-        </button>
-      </div>
+    <div class="users" v-if="users.length">
+      <div v-for="(user, index) in users" :key="index" class="items">
         <div class="user">
-        <div　class="image">
-          <img
-            src="https://growthseed.jp/wp-content/uploads/2016/12/peach-1.jpg"
-            class="img"
-          />
-        </div>
-        <p>中満のぞみ</p>
-        <button class="video-button -isActive button">
-          <div>
-            <AppIcon :icon="faMicrophoneSlash" color="white"></AppIcon>
+          <div class="image">
+            <img :src="user.icon" class="img" />
           </div>
-        </button>
+          <p>{{ user.name }}</p>
+          <button class="video-button -isActive button" disabled>
+            <div>
+              <AppIcon :icon="faMicrophoneSlash" color="white"></AppIcon>
+            </div>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -42,7 +27,7 @@ import AppIcon from "@/components/AppIcon.vue";
 import { faMicrophoneSlash } from "@fortawesome/free-solid-svg-icons";
 export default defineComponent({
   props: {
-    comments: {
+    users: {
       type: Array,
       required: true,
     },

@@ -5,7 +5,10 @@
         <div
           class="left"
           id="body"
-          :class="[{ '-no-member': !hasMember }, { '-is-comment': isComment||isUsers }]"
+          :class="[
+            { '-no-member': !hasMember },
+            { '-is-comment': isComment || isUsers },
+          ]"
         >
           <video class="video" id="webcam-video" style="display: none"></video>
           <canvas id="landmarks" style="display: none"></canvas>
@@ -31,7 +34,7 @@
           v-if="isComment"
           :comments="comments"
         ></Comment>
-        <UsersList @close="onClose" v-if="isUsers"></UsersList>
+        <UsersList @close="onClose" v-if="isUsers" :users="users"></UsersList>
       </div>
       <VideoFooter
         v-if="isJoin"
@@ -76,6 +79,10 @@ export default defineComponent({
       required: true,
     },
     comments: {
+      type: Array,
+      required: true,
+    },
+    users: {
       type: Array,
       required: true,
     },
