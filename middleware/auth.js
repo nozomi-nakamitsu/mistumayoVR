@@ -1,24 +1,12 @@
 import { APP_ROUTES, ROOM_ROUTES } from "../config/routes.ts";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
-import { initializeApp } from "firebase/app";
+import { app } from "@/plugins/firebase.js";
 import { getAuth } from "firebase/auth";
 
 export default function ({ route, redirect }) {
-  // 未ログインでも閲覧できるページたち
-  const guestPages = [APP_ROUTES.index.path];
-
-  const firebaseConfig = {
-    apiKey: process.env.API_KEY,
-    authDomain: process.env.AUTH_DOMAIN,
-    projectId: process.env.PROJECT_ID,
-    storageBucket: process.env.STORAGE_BUCKET,
-    messagingSenderId: process.env.MESSAGING_SENDER_ID,
-    appId: process.env.APP_ID,
-    measurementId: process.env.MEASUREMENT_ID,
-  };
-  const app = initializeApp(firebaseConfig);
   const auth = getAuth();
+
+  // 未ログインでも閲覧できるゲストページたち
+  const guestPages = [APP_ROUTES.index.path];
 
   return new Promise(async (resolve) => {
     auth.onAuthStateChanged((currentUser) => {

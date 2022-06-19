@@ -5,8 +5,8 @@
     >
     <div class="room">
       <div class="title">ROOM</div>
-      <div class="list font" @click="$router.push('/room/create')">
-        Create Room
+      <div class="list font create" @click="$router.push('/room/create')">
+        Roomをつくる
       </div>
       <div class="list" v-for="(room, key) in rooms" :key="key">
         <div class="name" @click="$router.push(`room/room_video/${room.name}`)">
@@ -25,7 +25,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import {
   defineComponent,
   onMounted,
@@ -34,14 +34,8 @@ import {
   watchEffect,
 } from "@nuxtjs/composition-api";
 import dayjs from "dayjs";
-import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  orderBy,
-  query,
-} from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { db } from "@/plugins/firebase.js";
 
 export default defineComponent({
   name: "ListRoomPage",
@@ -53,18 +47,6 @@ export default defineComponent({
     const dialog = ref(false);
 
     onMounted(async () => {
-      // TODO: 共通化する
-      const firebaseConfig = {
-        apiKey: process.env.API_KEY,
-        authDomain: process.env.AUTH_DOMAIN,
-        projectId: process.env.PROJECT_ID,
-        storageBucket: process.env.STORAGE_BUCKET,
-        messagingSenderId: process.env.MESSAGING_SENDER_ID,
-        appId: process.env.APP_ID,
-        measurementId: process.env.MEASUREMENT_ID,
-      };
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
       const querySnapshot = await getDocs(
         query(collection(db, "room"), orderBy("dateTime", "desc"))
       );
@@ -86,7 +68,7 @@ export default defineComponent({
         : `${process.env.APP_URL}/room/room_video/${roomName}`;
     };
 
-    // NOTE: アラート非表示のタイミング
+    // NOTE: アラート非表示のタイミング;
     watchEffect(() => {
       if (isAlertVisible.value) {
         setTimeout(() => {
@@ -139,12 +121,10 @@ export default defineComponent({
     text-overflow: ellipsis;
   }
 
-  > .room > .font {
+  > .room > .create {
     cursor: pointer;
     color: #e8374a;
-    &:hover {
-      opacity: 75%;
-    }
+    background-color: rgba(87, 39, 211, 0.03);
   }
 
   > .room > .list > .name {
@@ -179,5 +159,12 @@ export default defineComponent({
       transition: all 0.1s ease 0s;
     }
   }
+}
+
+.theme--dark.v-sheet {
+  background: rgba(0, 128, 0, 0.5);
+  border-color: #1e1e1e;
+  color: #ffffff;
+  border-radius: 4px !important;
 }
 </style>

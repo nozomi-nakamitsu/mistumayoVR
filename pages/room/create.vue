@@ -1,16 +1,17 @@
 <template>
   <div class="create-room-container">
-    <h1>CREATE ROOM</h1>
+    <h1>Room作成</h1>
     <form class="form" @submit.prevent="createRoom">
       <label class="section">
-        <span class="title">Room name</span>
-        <input type="text" v-model="name" class="text" />
+        <span class="title">タイトル</span>
+        <input type="text" v-model="name" class="text" required />
       </label>
+      <span>開始時間</span>
       <label class="date">
-        <input type="datetime-local" v-model="date" />
+        <input type="datetime-local" v-model="date" required />
       </label>
       <div class="footer">
-        <button type="submit" class="button">Continue</button>
+        <button type="submit" class="button">続ける</button>
       </div>
     </form>
   </div>
@@ -18,9 +19,9 @@
 
 <script>
 import { defineComponent, ref, useRouter } from "@nuxtjs/composition-api";
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { ROOM_ROUTES } from "@/config/routes.ts";
+import { db } from "@/plugins/firebase.js";
 
 export default defineComponent({
   name: "CreateRoomPage",
@@ -28,18 +29,6 @@ export default defineComponent({
     const router = useRouter();
     const name = ref(null);
     const date = ref(null);
-    // TODO: 共通化する
-    const firebaseConfig = {
-      apiKey: process.env.API_KEY,
-      authDomain: process.env.AUTH_DOMAIN,
-      projectId: process.env.PROJECT_ID,
-      storageBucket: process.env.STORAGE_BUCKET,
-      messagingSenderId: process.env.MESSAGING_SENDER_ID,
-      appId: process.env.APP_ID,
-      measurementId: process.env.MEASUREMENT_ID,
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
 
     const createRoom = async () => {
       try {
