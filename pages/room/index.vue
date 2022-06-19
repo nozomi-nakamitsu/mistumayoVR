@@ -141,7 +141,7 @@ export default defineComponent({
 
   > .room > .font {
     cursor: pointer;
-    color: #5727e7;
+    color: #e8374a;
     &:hover {
       opacity: 75%;
     }
@@ -172,15 +172,10 @@ export default defineComponent({
     height: 30px;
     padding: 0px 15px;
     text-shadow: rgb(0 0 0 / 25%) 0px 3px 8px;
-    background: linear-gradient(
-      92.88deg,
-      rgb(69, 94, 181) 9.16%,
-      rgb(86, 67, 204) 43.89%,
-      rgb(103, 63, 215) 64.72%
-    );
+    background: #e8374a;
     transition: all 0.5s ease 0s;
     &:hover {
-      box-shadow: rgb(80 63 205 / 50%) 0px 1px 40px;
+      box-shadow: rgb(255, 0, 0, 0.25) 0px 1px 40px;
       transition: all 0.1s ease 0s;
     }
   }
