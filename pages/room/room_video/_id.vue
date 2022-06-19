@@ -437,6 +437,7 @@ export default defineComponent({
     async function onScreenShare(isShare) {
       if (isShare.value) {
         onClickStartScreenShare();
+        onMaximizeLocalVideo();
         return;
       }
       onClickStopScreenShare();
