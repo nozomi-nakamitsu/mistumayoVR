@@ -39,3 +39,21 @@
     top: 0;
   }
 }
+.speakingIconWrapper {
+  width: 28px;
+  height: 28px;
+  background-color: $green;
+  position: absolute;
+  left: 8px;
+  display: flex;
+  bottom: 36px;
+  border-radius: 50%;
+  > .speakingIcon {
+    margin: auto;
+    width: 50%;
+  }
+  &.-currentUser {
+    right: 0;
+    top: 0;
+  }
+}
