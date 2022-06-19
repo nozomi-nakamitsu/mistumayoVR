@@ -531,6 +531,11 @@ export default defineComponent({
         screenShareStream = await navigator.mediaDevices.getDisplayMedia({
           video: true,
         });
+        const audioStream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        const audioTrack = audioStream.getAudioTracks()[0];
+        screenShareStream.addTrack(audioTrack);
       } catch (error) {
         switchScreeSharing.value = true;
         return;
