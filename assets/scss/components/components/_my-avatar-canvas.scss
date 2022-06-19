@@ -1,4 +1,5 @@
 .my-avatar-canvas {
+  border-radius: 8px;
   &.-mixmize {
     margin-right: 800px;
     display: block;
@@ -7,6 +8,6 @@
     margin-top: 40px;
   }
 }
-.my-avatar-canvas-wrapper{
+.my-avatar-canvas-wrapper {
   position: relative;
 }
