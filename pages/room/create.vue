@@ -121,7 +121,7 @@ export default defineComponent({
 
   > .form > .footer > .button {
     width: 100%;
-    background-color: #5727e7;
+    background: #e8374a;
     border: 1px solid transparent;
     color: #fff;
     height: 56px;
