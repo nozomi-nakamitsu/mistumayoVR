@@ -94,12 +94,24 @@ export default defineComponent({
     };
     const switchAvator = () => {
       if (localAvatar.value === Avatar.avatar1) {
-        return "/resource/sample1.vrm";
+        return "/resource/taimei1.vrm";
       }
       if (localAvatar.value === Avatar.avatar2) {
-        return "/resource/sample2.vrm";
+        return "/resource/hoshino1.vrm";
       }
-      return "/resource/sample2.vrm";
+      if (localAvatar.value === Avatar.avatar3) {
+        return "/resource/kishigami1.vrm";
+      }
+      if (localAvatar.value === Avatar.avatar4) {
+        return "/resource/taimei2.vrm";
+      }
+      if (localAvatar.value === Avatar.avatar5) {
+        return "/resource/hoshino2.vrm";
+      }
+      if (localAvatar.value === Avatar.avatar6) {
+        return "/resource/kishigami2.vrm";
+      }
+      return "/resource/hoshino1.vrm";
     };
     // 画面共有の設定
     let screenShareStream;
