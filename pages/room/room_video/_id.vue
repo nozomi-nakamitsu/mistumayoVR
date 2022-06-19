@@ -19,7 +19,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import {
   defineComponent,
   onMounted,
@@ -334,6 +334,21 @@ export default defineComponent({
       }
       return muteIconWrapper;
     };
+    const setSpeakingIcon = (peerId, type) => {
+      const speakingIcon = document.createElement("img");
+      const speakingIconWrapper = document.createElement("div");
+      speakingIcon.setAttribute("class", "speakingIcon");
+      speakingIconWrapper.setAttribute("class", "speakingIconWrapper");
+      speakingIcon.setAttribute("src", "/resource/speakingIcon.svg");
+      speakingIcon.setAttribute("data-speaking-icon-id", peerId);
+      speakingIconWrapper.setAttribute("data-speaking-icon-wrapper-id", peerId);
+      speakingIconWrapper.append(speakingIcon);
+      if (type === "currentUser") {
+        speakingIconWrapper.setAttribute("class", "-currentUser");
+      }
+      return speakingIconWrapper;
+    };
+    const isDetectingAudioStaus = ref("untreated");
 
     /**
      *部屋入室の処理
@@ -360,43 +375,36 @@ export default defineComponent({
         mode: "sfu",
         stream,
       });
-      // vad.startVoiceDetection(stream, (val) => {
-      //   console.log(stream);
-      //   console.log("curr val:", val);
-      //   // view.micEffecter(val);
-      //   // if (val === 0) {
-      //   //   const mutePeerIcon = document.querySelector(
-      //   //     `[data-mute-icon-wrapper-id="${stream.id}"]`
-      //   //   );
-      //   //   mutePeerIcon.style.display = "none";
-      //   // }
-      // });
       room.on("open", async () => {
         hasMember.value = !!room.members.length;
       });
       room.on("stream", async (stream) => {
         const remoteUser = await fetchUserByPeerId(stream.peerId);
         addRemoteVideo(stream, remoteUser);
-        console.log(remoteUser);
         users.value = [...users.value, remoteUser];
         vad.startVoiceDetection(stream, (val) => {
-          console.log("リモートval:", val);
-          voiceDetection.value.prevBefore = voiceDetection.value.prev;
-          voiceDetection.value.prev = voiceDetection.value.current;
-          voiceDetection.value.current = val;
           const mutePeerIcon = document.querySelector(
             `[data-mute-icon-wrapper-id="${stream.peerId}"]`
           );
-          console.log("mutePeerIcon", mutePeerIcon);
-          if (
-            voiceDetection.value.prevBefore === 0 &&
-            voiceDetection.value.prev === 0 &&
-            voiceDetection.value.current === 0
-          ) {
-            mutePeerIcon.style.display = "none";
-            return;
+          const speakingPeerIcon = document.querySelector(
+            `[data-speaking-icon-wrapper-id="${stream.peerId}"]`
+          );
+          if (isDetectingAudioStaus.value === "untreated") {
+            isDetectingAudioStaus.value = "completed";
           }
-          mutePeerIcon.style.display = "flex";
+          if (isDetectingAudioStaus.value === "completed") {
+            isDetectingAudioStaus.value = "processing";
+            setTimeout(() => {
+              isDetectingAudioStaus.value = "completed";
+              if (val === 0) {
+                mutePeerIcon.style.display = "flex";
+                speakingPeerIcon.style.display = "none";
+                return;
+              }
+              mutePeerIcon.style.display = "none";
+              speakingPeerIcon.style.display = "flex";
+            }, 1000);
+          }
         });
       });
       room.on("close", async () => {
@@ -406,6 +414,7 @@ export default defineComponent({
           remoteVideo.srcObject = null;
           remoteVideo.remove();
         });
+        vad.stopVoiceDetection();
       });
       room.on("peerLeave", (peerId) => {
         hasMember.value = !!room.members.length;
@@ -467,9 +476,11 @@ export default defineComponent({
       newDom.append(userName);
       const icon = setMiximizeIcon(stream.peerId, "");
       const muteIcon = setMuteIcon(stream.peerId, "");
-
+      const speakingIcon = setSpeakingIcon(stream.peerId, "");
       newDom.append(icon);
       newDom.append(muteIcon);
+      newDom.append(speakingIcon);
+
       remoteVideos.value.append(newDom);
       await newVideo.play().catch(console.error);
       document
@@ -619,7 +630,6 @@ export default defineComponent({
       remotMaximizeVideo.id = "remote-maximize-video";
       remotMaximizeVideo.setAttribute("class", "webcam-video");
       remotMaximizeVideo.setAttribute("data-maximize-id", peerId);
-
       remotMaximizeVideo.srcObject = remoteVideo.srcObject;
       remotMaximizeVideo.playsInline = true;
       $body.insertBefore(remotMaximizeVideo, $body.firstChild);
