@@ -28,7 +28,7 @@ export default defineComponent({
   name: "Index",
   setup() {
     const router = useRouter();
-    // TODO: 共通化する
+    // TODO: どこか別のファイルへ移動させて処理を共通化したい
     const firebaseConfig = {
       apiKey: process.env.API_KEY,
       authDomain: process.env.AUTH_DOMAIN,
@@ -73,6 +73,7 @@ export default defineComponent({
     };
 
     auth.onAuthStateChanged(async (user) => {
+      // ログインしていないとnullが返る
       if (user) {
         // TODO: ヘッダーの作成をしたらログインユーザ名は不要
         const signOutMessage = `
@@ -90,8 +91,6 @@ export default defineComponent({
         } catch (e) {
           console.error(e);
         }
-
-        router.push(ROOM_ROUTES.create.path);
       } else {
         const signInMessage = `
             <button class="button" type="submit"  onClick="signIn()">Continue<\/button>
