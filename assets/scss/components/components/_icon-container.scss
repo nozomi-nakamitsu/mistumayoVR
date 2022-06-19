@@ -22,3 +22,20 @@
     top: 0;
   }
 }
+.muteIconWrapper {
+  width: 28px;
+  height: 28px;
+  background-color: #e8374a;
+  position: absolute;
+  left: 8px;
+  display: flex;
+  bottom: 36px;
+  border-radius: 50%;
+  > .muteIcon {
+    margin: auto;
+  }
+  &.-currentUser {
+    right: 0;
+    top: 0;
+  }
+}

@@ -39,6 +39,7 @@ import dayjs from "dayjs";
 import { getUid, getUserByUid } from "@/compositions/useAuth";
 import { db } from "@/plugins/firebase.js";
 import { Avatar } from "@/enums/avatar";
+import voiceDetertor from "@/compositions/useVoiceDetection";
 
 export default defineComponent({
   name: "RoomDetailPage",
@@ -64,6 +65,13 @@ export default defineComponent({
     const localAvatar = ref(Avatar.avatar1);
     const users = ref([]);
     const auth = ref();
+    const vad = new voiceDetertor();
+    const voiceDetection = ref({
+      prevBefore: 1,
+      prev: 1,
+      current: 1,
+    });
+
     const setSkyWay = () => {
       const API_KEY = process.env.SKY_WAY_API_KEY;
       const date = dayjs(new Date()).format("YYYYMMDDHHmmss");
@@ -312,6 +320,20 @@ export default defineComponent({
       }
       return maximizeIcon;
     };
+    const setMuteIcon = (peerId, type) => {
+      const muteIcon = document.createElement("img");
+      const muteIconWrapper = document.createElement("div");
+      muteIcon.setAttribute("class", "muteIcon");
+      muteIconWrapper.setAttribute("class", "muteIconWrapper");
+      muteIcon.setAttribute("src", "/resource/muteIcon.png");
+      muteIcon.setAttribute("data-mute-icon-id", peerId);
+      muteIconWrapper.setAttribute("data-mute-icon-wrapper-id", peerId);
+      muteIconWrapper.append(muteIcon);
+      if (type === "currentUser") {
+        muteIconWrapper.setAttribute("class", "-currentUser");
+      }
+      return muteIconWrapper;
+    };
 
     /**
      *部屋入室の処理
@@ -338,6 +360,17 @@ export default defineComponent({
         mode: "sfu",
         stream,
       });
+      // vad.startVoiceDetection(stream, (val) => {
+      //   console.log(stream);
+      //   console.log("curr val:", val);
+      //   // view.micEffecter(val);
+      //   // if (val === 0) {
+      //   //   const mutePeerIcon = document.querySelector(
+      //   //     `[data-mute-icon-wrapper-id="${stream.id}"]`
+      //   //   );
+      //   //   mutePeerIcon.style.display = "none";
+      //   // }
+      // });
       room.on("open", async () => {
         hasMember.value = !!room.members.length;
       });
@@ -346,6 +379,25 @@ export default defineComponent({
         addRemoteVideo(stream, remoteUser);
         console.log(remoteUser);
         users.value = [...users.value, remoteUser];
+        vad.startVoiceDetection(stream, (val) => {
+          console.log("リモートval:", val);
+          voiceDetection.value.prevBefore = voiceDetection.value.prev;
+          voiceDetection.value.prev = voiceDetection.value.current;
+          voiceDetection.value.current = val;
+          const mutePeerIcon = document.querySelector(
+            `[data-mute-icon-wrapper-id="${stream.peerId}"]`
+          );
+          console.log("mutePeerIcon", mutePeerIcon);
+          if (
+            voiceDetection.value.prevBefore === 0 &&
+            voiceDetection.value.prev === 0 &&
+            voiceDetection.value.current === 0
+          ) {
+            mutePeerIcon.style.display = "none";
+            return;
+          }
+          mutePeerIcon.style.display = "flex";
+        });
       });
       room.on("close", async () => {
         hasMember.value = !!room.members.length;
@@ -414,7 +466,10 @@ export default defineComponent({
       newDom.append(newVideo);
       newDom.append(userName);
       const icon = setMiximizeIcon(stream.peerId, "");
+      const muteIcon = setMuteIcon(stream.peerId, "");
+
       newDom.append(icon);
+      newDom.append(muteIcon);
       remoteVideos.value.append(newDom);
       await newVideo.play().catch(console.error);
       document
